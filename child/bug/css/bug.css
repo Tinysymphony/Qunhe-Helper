@@ -1,0 +1,109 @@
+html {
+    /*height: 100%;*/
+}
+
+.item {
+    margin-top: 20px;
+    width: 340px;
+    /*height: 40px;*/
+    line-height: 20px;
+    background-color: #fff;
+    border-radius: 5px;
+    box-shadow: 0 1px 3px #333;
+    padding: 10px;
+    cursor: pointer;
+}
+
+.item a {
+    margin-top: 10px;
+    font-size: 12px;
+    transition: 0.5s;
+    cursor: pointer;
+}
+
+.item-sender:hover {
+    color: #2BB8AA;
+}
+
+.item-name {
+    margin-right: 40px;
+}
+
+.item-info {
+    margin-top: 10px;
+}
+
+.item-time {
+    margin-left: 40px;
+    color: #ccc;
+}
+
+p.item-content {
+    display: block;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #ededed;
+}
+
+.main-list {
+    margin-bottom: 40px;
+}
+
+/**/
+
+.main-list .item {
+    width: 240px;
+}
+
+.main-list li:first-child {
+    /*width: 300px !important;*/
+}
+
+.item a {
+    color: #fff;
+}
+
+#first .item{
+    width: 320px;
+    background-color: #FFD700;
+}
+
+
+#second .item {
+    width: 290px;
+    background-color: #C0C0C0;
+}
+
+#third .item {
+    width: 270px;
+    background-color:  #C47222;
+}
+
+#last .item p {
+    margin-left: 3px;
+}
+
+h1 {
+    text-align: center;
+}
+
+.item img {
+    display: inline-block;
+    border-radius: 50%;
+}
+
+.item p {
+    padding: 0 20px;
+    display: inline-block;
+    margin-top: -10px;
+    margin-left: 10px;
+}
+
+.item a{
+    margin: 0;
+    font-size: 15px;
+}
+
+.item-info a {
+    display: block;
+    color: #000;
+}

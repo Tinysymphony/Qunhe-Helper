@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>群核头条 | 群核人的新闻平台</title>
+    <link rel="stylesheet" href="../../css/basic.css" media="screen" title="no title" charset="utf-8">
+    <link rel="stylesheet" href="../../css/child.css" media="screen" title="no title" charset="utf-8">
+    <link rel="stylesheet" href="css/top.css" media="screen" title="no title" charset="utf-8">
+    <script src="../../js/jquery.min.js" charset="utf-8"></script>
+    <script src="../../js/modernizr.custom.js"></script>
+    <link rel="stylesheet" type="text/css" href="css/demo5.css"/>
+</head>
+<body style="-webkit-app-region: drag">
+<div class="body center">
+    <!-- <div class="close"><img class="close-btn" src="../../img/close.png" alt="" id="close"/></div> -->
+    <div class="main clearfix">
+        <ul class="bb-custom-grid" id="bb-custom-grid">
+            <li>
+                <h3>皓哥人人爱</h3>
+
+                <div class="bb-bookblock">
+                    <div class="bb-item"><a href="http://dribbble.com/shots/614568-Lands-Devil-Spirit-Jinx"><img
+                            src="images/demo3/1.jpg" alt="image01"/></a></div>
+                    <div class="bb-item"><a href="http://dribbble.com/shots/614264-Lands-Antspearer"><img
+                            src="images/demo3/2.jpg" alt="image02"/></a></div>
+                    <div class="bb-item"><a href="http://dribbble.com/shots/614153-Lands-Bonemonster"><img
+                            src="images/demo3/3.jpg" alt="image03"/></a></div>
+                    <div class="bb-item"><a href="http://dribbble.com/shots/614073-Lands-Boneater"><img
+                            src="images/demo3/4.jpg" alt="image04"/></a></div>
+                </div>
+                <nav>
+                    <span class="bb-current"></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </nav>
+            </li>
+            <li>
+                <h3>暴雨梨花奶黄包</h3>
+
+                <div class="bb-bookblock">
+                    <div class="bb-item"><a href="http://dribbble.com/shots/702201-Cat"><img src="images/demo3/5.jpg"
+                                                                                             alt="image05"/></a></div>
+                    <div class="bb-item"><a href="http://dribbble.com/shots/493644-Death-Planet"><img
+                            src="images/demo3/6.jpg" alt="image06"/></a></div>
+                    <div class="bb-item"><a href="http://dribbble.com/shots/432311-Bearwolf"><img
+                            src="images/demo3/7.jpg" alt="image07"/></a></div>
+                    <div class="bb-item"><a href="http://dribbble.com/shots/297337-iPhone-4S"><img
+                            src="images/demo3/8.jpg" alt="image08"/></a></div>
+                </div>
+                <nav>
+                    <span class="bb-current"></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </nav>
+            </li>
+            <li>
+                <h3>史上最帅CEO</h3>
+
+                <div class="bb-bookblock">
+                    <div class="bb-item"><a href="http://dribbble.com/shots/298473-Pirate-Ghosts"><img
+                            src="images/demo3/9.jpg" alt="image09"/></a></div>
+                    <div class="bb-item"><a href="http://dribbble.com/shots/298470-Sad-Tree"><img
+                            src="images/demo3/10.jpg" alt="image10"/></a></div>
+                    <div class="bb-item"><a href="http://dribbble.com/shots/298467-Male-Mermaid"><img
+                            src="images/demo3/11.jpg" alt="image11"/></a></div>
+                    <div class="bb-item"><a href="http://dribbble.com/shots/298463-Wolf-Eats-Cat"><img
+                            src="images/demo3/12.jpg" alt="image12"/></a></div>
+                </div>
+                <nav>
+                    <span class="bb-current"></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </nav>
+            </li>
+            <li>
+                <h3>群核年后或收购阿里</h3>
+
+                <div class="bb-bookblock">
+                    <div class="bb-item"><a href="http://dribbble.com/shots/327171-Around-the-Office-Signage-7"><img
+                            src="images/demo3/13.jpg" alt="image13"/></a></div>
+                    <div class="bb-item"><a href="http://dribbble.com/shots/327170-Around-the-Office-Signage-6"><img
+                            src="images/demo3/14.jpg" alt="image14"/></a></div>
+                    <div class="bb-item"><a href="http://dribbble.com/shots/326463-Around-the-Office-Signage-4"><img
+                            src="images/demo3/15.jpg" alt="image15"/></a></div>
+                    <div class="bb-item"><a href="http://dribbble.com/shots/326458-Around-the-Office-Signage-2"><img
+                            src="images/demo3/16.jpg" alt="image16"/></a></div>
+                </div>
+                <nav>
+                    <span class="bb-current"></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </nav>
+            </li>
+        </ul>
+    </div>
+</div>
+<script src="js/top.js" charset="utf-8"></script>
+<script src="../../js/jquery.bookblock.js" charset="utf-8"></script>
+<script type="text/javascript">
+    // var $ = require('jquery');
+    var Page = (function () {
+
+        var $grid = $('#bb-custom-grid');
+
+        return {
+            init: function () {
+                $grid.find('div.bb-bookblock').each(function (i) {
+
+                    var $bookBlock = $(this),
+                            $nav = $bookBlock.next().children('span'),
+                            bb = $bookBlock.bookblock({
+                                speed: 600,
+                                shadows: false
+                            });
+
+                    // add navigation events
+                    $nav.each(function (i) {
+                        $(this).on('click touchstart', function (event) {
+                            var $dot = $(this);
+                            $nav.removeClass('bb-current');
+                            $dot.addClass('bb-current');
+                            $bookBlock.bookblock('jump', i + 1);
+                            return false;
+                        });
+                    });
+
+                    // add swipe events
+                    $bookBlock.children().on({
+                        'swipeleft': function (event) {
+                            $bookBlock.bookblock('next');
+                            return false;
+                        },
+                        'swiperight': function (event) {
+                            $bookBlock.bookblock('prev');
+                            return false;
+                        }
+
+                    });
+
+                });
+            }
+        };
+
+    })();
+
+    Page.init();
+</script>
+</body>
+</html>

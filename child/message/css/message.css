@@ -1,0 +1,49 @@
+html {
+    /*height: 100%;*/
+}
+
+.item {
+    margin-top: 20px;
+    width: 340px;
+    /*height: 40px;*/
+    line-height: 20px;
+    background-color: #fff;
+    border-radius: 5px;
+    box-shadow: 0 0 3px #555;
+    padding: 10px;
+    cursor: pointer;
+}
+
+.item a {
+    margin-top: 10px;
+    font-size: 12px;
+    transition: 0.5s;
+    cursor: pointer;
+}
+
+.item-sender:hover {
+    color: #2BB8AA;
+}
+
+.item-name {
+    margin-right: 40px;
+}
+
+.item-info {
+    margin-top: 10px;
+}
+
+.item-time {
+    margin-left: 40px;
+    color: #ccc;
+}
+
+p.item-content {
+    display: block;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #ededed;
+}
+
+.main-list {
+    margin-bottom: 40px;
+}

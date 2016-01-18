@@ -1,0 +1,102 @@
+.tiny .close-btn {
+    height: 20px;
+    width: 20px;
+    cursor: pointer;
+}
+
+div.tiny {
+    text-align: center;
+    display: block;
+    position: fixed;
+    top: 120px;
+    /*margin-top: 300px;*/
+    margin-left: 10px;
+    border-radius: 10px;
+    height: 300px;
+    background-color: #fff;
+    overflow: hidden;
+    cursor: default;
+    box-shadow: 0 0 8px #888;
+    z-index: 5;
+}
+
+
+.img {
+    text-align: center;
+    margin-top: 30px;
+    width: 104px;
+    height: 104px;
+    box-sizing: border-box;
+    border-radius: 50%;
+    border: 2px solid #ccc;
+    transition: 0.5s;
+    overflow: hidden;
+}
+
+.img:hover {
+    border-color: #00B9EA;
+}
+
+.tiny img {
+    width: 100px;
+    height: 100px;
+}
+
+.info {
+    margin-top: 40px;
+    text-align: center;
+}
+
+.info input {
+    box-sizing: border-box;
+    display: block;
+    border: 0;
+    height: 20px;
+    width: 120px;
+    border-bottom: 1px solid #007D9E;
+    margin-top: 15px;
+    font-size: 16px;
+    text-align: center;
+    outline: none;
+}
+
+.info .login {
+    border: none;
+    border-radius: 5px;
+    height: 30px;
+    color: #fff;
+    transition: 0.5s;
+    cursor: pointer;
+    background-color: #2BB8AA;
+}
+
+.info .login:hover {
+    background-color: #3da9f7;
+}
+
+.login-success, .login-error {
+    /*margin-top: 10px;*/
+    text-align: center;
+    display: none;
+    color: #2BB8AA;
+}
+
+.menu-wp {
+    padding-left: 40px;
+}
+/*menu*/
+
+#dummy .dummy__item a {
+	color: #fff;
+	cursor: pointer;
+    z-index: 100;
+}
+
+.menu .div:hover {
+    background-color: #F9B427;
+
+}
+
+#dummy .dummy__item:hover {
+	background-color: #F9B427;
+}

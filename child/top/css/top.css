@@ -1,0 +1,40 @@
+html {
+    min-height: none;
+    /*overflow: hidden;*/
+}
+
+.item {
+    margin-top: 20px;
+    width: 300px;
+    height: 40px;
+    line-height: 40px;
+    background-color: #fff;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.item-name {
+    margin-left: 40px;
+}
+
+.main-list {
+    margin-bottom: 40px;
+}
+
+#bb-custom-grid {
+    margin-top: 40px;
+    margin-bottom: 40px;
+    text-align: center;
+}
+
+#bb-custom-grid h3{
+    font-size: 20px;
+    /*margin-bottom: 20px;*/
+}
+
+#bb-custom-grid li {
+    display: inline-block;
+    float: none;
+    margin-left: 0;
+    margin-right: 0;
+}

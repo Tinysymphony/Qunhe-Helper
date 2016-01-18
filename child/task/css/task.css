@@ -1,0 +1,23 @@
+
+html {
+    /*height: 100%;*/
+}
+
+
+.item {
+    margin-top: 20px;
+    width: 300px;
+    height: 40px;
+    line-height: 40px;
+    background-color: #fff;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.item-name {
+    margin-left: 40px;
+}
+
+.main-list {
+    margin-bottom: 40px;
+}
