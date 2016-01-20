@@ -1,10 +1,6 @@
 var req = require('request');
 var globalJar = req.jar();
 
-function _jsonHandler(method, url, data, callback){
-
-}
-
 function _login(username, password, callback){
     var options = {
         url: 'http://jira.qunhequnhe.com/rest/auth/1/session',
@@ -55,20 +51,19 @@ function _getMessage(callback){
 }
 
 function _base(options, callback){
+    //guozi
+    // return callback(true);
     req(options, function(err, res, body){
         if(!err && res.statusCode === 200){
-            var status = true;
-            callback(status, body);
+            callback(true, body);
         } else {
-            var status = false;
-            callback(status, body);
+            callback(false, body);
         }
     });
 }
 
 var Handler = {
     login: _login,
-    jsonHandler: _jsonHandler,
     getInfo: _getInfo,
     getTask: _getTask,
     getBug: _getBug,

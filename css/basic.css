@@ -1,39 +1,78 @@
-.trans {
-    background-color: transparent;
+@font-face {
+    font-family: 'Oxygen';
+    src: url(../font/Oxygen/Oxygen.otf);
 }
 
-html, body, div, section, header, footer, p, span, a, ul, li{
+@font-face {
+    font-family: 'Lanting';
+    src: url(../font/Lanting/xianhei.otf);
+}
+
+*,
+*:after,
+*:before {
+	-webkit-box-sizing: border-box;
+	box-sizing: border-box;
+}
+
+html, body, div, section, header, footer, p, span, a, ul, li, dd, dt{
     margin: 0;
     padding: 0;
 }
 
 body {
     position: relative;
+    font-family: 'Oxygen', 'Lanting', Helvetica, Arial, sans-serif;
+    word-wrap: break-word;
+    font-size: 14px;
 }
 
-li {
-    list-style-type: none;
+li {list-style-type: none;}
+
+a {text-decoration: none;}
+
+img {vertical-align: middle;}
+
+.trans {background-color: transparent;}
+
+.center {margin-left: auto; margin-right: auto;}
+.fl {float: left;}
+.fr {float: right;}
+
+.br3 {border-radius: 3px;}
+.br5 {border-radius: 5px;}
+.br10 {border-radius: 10px;}
+
+.mr3 {margin-right: 3px;}
+.mr5 {margin-right: 5px;}
+.mr10 {margin-right: 10px;}
+
+.ml3 {margin-left: 3px;}
+.ml5 {margin-left: 5px;}
+.ml10 {margin-left: 10px;}
+
+.w100 {width: 100px;}
+.w200 {width: 200px;}
+.w300 {width: 300px;}
+.w400 {width: 400px;}
+.w500 {width: 500px;}
+
+.none {
+    display: none;
+    width: 0;
+    height: 0;
 }
 
-a {
-    text-decoration: none;
+.box-shadow1 {box-shadow: 0px 0px 24px -4px rgba(0,0,0,0.75);}
+
+.icon-drag {
+    background: url('../img/drag.png');
+    width: 16px;
+    height: 16px;
 }
 
-.center {
-    margin-left: auto;
-    margin-right: auto;
-}
-
-.fl {
-    float: left;
-}
-
-.fr {
-    float: right;
-}
-
-.w200 {
-    width: 200px;
+.img{
+    z-index: 15;
 }
 
 .close {
@@ -55,4 +94,20 @@ a {
     color: #fff;
     border-radius: 50%;
     text-align: center;
+}
+
+.header {
+    top: 0;
+    position: fixed;
+    width: 100%;
+    height: 90px;
+    background-color: #2bb8aa;
+    padding: 5px 20px;
+    color: #fff;
+    z-index: 1000;
+}
+
+.header .title{
+    line-height: 20px;
+    cursor: default;
 }

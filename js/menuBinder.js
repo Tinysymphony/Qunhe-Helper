@@ -6,31 +6,38 @@ var httpHandler = require('./util/httpHandler');
 const ipc = require('electron').ipcRenderer;
 
 function binder(){
-    var $menu = $('.menu');
+    var $menu = $('#dummy');
 
     $menu
     .on('click', '.J-task', function(){
         startWindow('task', 400, 500);
+        $menu.toggleClass('dummy--active');
     })
     .on('click', '.J-bug', function(){
         startWindow('bug', 400, 500);
+        $menu.toggleClass('dummy--active');
     })
     .on('click', '.J-message', function(){
         startWindow('message', 400, 500);
+        $menu.toggleClass('dummy--active');
     })
     .on('click', '.J-info', function(){
         startWindow('info', 300, 400, JSON.stringify(window.g_info));
-        // notice('click', 'adsfadsfa', 'asdf');
+        $menu.toggleClass('dummy--active');
     })
     .on('click', '.J-top', function(){
         startWindow('top', 400, 600);
+        $menu.toggleClass('dummy--active');
     })
     .on('click', '.J-about', function(){
         startWindow('about', 300, 380);
+        $menu.toggleClass('dummy--active');
+    })
+    .on('click', '.J-settings', function(){
+        startWindow('settings', 400, 600);
     });
 
     $(document).on('click', '.img img', function(){
-        var $menu = $('#dummy');
         $menu.toggleClass('dummy--active');
     });
 

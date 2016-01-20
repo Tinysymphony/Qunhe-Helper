@@ -7,15 +7,28 @@ var notice= require('./js/util/notification');
 // var infoBinder = require('./js/infoBinder');
 
 $(function(){
+    var $loginBtn = $('.login'),
+        moveFlag = false;
     $(document).on('keyup', function(e){
+        //handle enter key down
+        $('.login-success, .login-error').css({display: 'none'});
+        if($loginBtn.hasClass('disabled')){
+            return;
+        }
         if(e.keyCode === 13){
-            $('.login-success, .login-error').css({display: 'none'});
+            $loginBtn.addClass('disabled');
             var username = $('.username').val(),
                 password = $('.password').val();
-            ipc.send('login', username, password)
+            // ipc.send('login', username, password);
+            ipc.send('test');
         }
     }).on('click', '.login', function(){
+        //handle click event on login button
         $('.login-success, .login-error').css({display: 'none'});
+        if($loginBtn.hasClass('disabled')){
+            return;
+        }
+        $loginBtn.addClass('disabled');
         var username = $('.username').val(),
             password = $('.password').val();
         ipc.send('login', username, password)
@@ -24,18 +37,27 @@ $(function(){
     }).on('focus', '.info input', function(){
         $(this).select();
     });
+    // todo: click and drag bug
+    // on('mousedown', '.img img', function(){
+    //
+    // }).on('mousemove', '.img img', function(){
+    //
+    // }).on('mouseup', '.img img', function(){
+    //
+    // });
 
     ipc.on('login-success', loginSuccess);
     ipc.on('login-error', loginError);
     ipc.on('load-info', uploadInfo);
     ipc.on('render-message', renderMessage);
 
+    // bindImageAction();
+
     // setTimeout(tmp_render, 22000);
 });
 
 function loginSuccess(){
-    var about = 'file://' + path.join(__dirname, 'child/about/about.html');
-
+    // var about = 'file://' + path.join(__dirname, 'child/about/about.html');
     $('.login-success').css({display: 'block'});
     $('.tiny').css({
         'background': 'transparent',
@@ -43,21 +65,25 @@ function loginSuccess(){
         'box-shadow': 'none',
     });
     $('.close, .return, .info').remove();
+    $('.drag').css({display: 'block'});
     setTimeout(move, 400);
 }
 
 function loginError(){
+    $('.login').removeClass('disabled');
     $('.login-error').css({display: 'block'});
 }
 
 function move(){
     $('.tiny').animate({
-        'margin-top': 180
+        'margin-top': 160
     }, 300);
 
     $('.img img').css({
         'cursor': 'pointer'
     });
+
+    //bind
     setTimeout(menuBinder, 500);
 }
 
@@ -74,8 +100,3 @@ function renderMessage(emitter, data, isShow){
     $('.red-point').text(window.g_messageCount).css({display: 'block'});
     $('.J-message').text('留言板（' + window.g_messageCount + '）');
 }
-
-// function tmp_render(){
-//     notice('BUG提醒', 'F码抢码未登录情况点击抢VIP，要点两次才能跳转到登录页！ from 玉米');
-//
-// }

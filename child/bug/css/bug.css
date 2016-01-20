@@ -2,6 +2,30 @@ html {
     /*height: 100%;*/
 }
 
+.header ul {
+    position: absolute;
+    bottom: 0;
+}
+
+.header .tab-item {
+    margin-right: 20px;
+    border-bottom: 3px solid transparent;
+    transition: 0.5s;
+}
+
+.header .tab-item.focus {
+    border-color: #FFF;
+}
+
+.header .tab-item:hover {
+    border-color: #FFF;
+}
+
+.header .tab-item a {
+    color: #FFF;
+    cursor: pointer;
+}
+
 .item {
     margin-top: 20px;
     width: 340px;
@@ -46,64 +70,4 @@ p.item-content {
 
 .main-list {
     margin-bottom: 40px;
-}
-
-/**/
-
-.main-list .item {
-    width: 240px;
-}
-
-.main-list li:first-child {
-    /*width: 300px !important;*/
-}
-
-.item a {
-    color: #fff;
-}
-
-#first .item{
-    width: 320px;
-    background-color: #FFD700;
-}
-
-
-#second .item {
-    width: 290px;
-    background-color: #C0C0C0;
-}
-
-#third .item {
-    width: 270px;
-    background-color:  #C47222;
-}
-
-#last .item p {
-    margin-left: 3px;
-}
-
-h1 {
-    text-align: center;
-}
-
-.item img {
-    display: inline-block;
-    border-radius: 50%;
-}
-
-.item p {
-    padding: 0 20px;
-    display: inline-block;
-    margin-top: -10px;
-    margin-left: 10px;
-}
-
-.item a{
-    margin: 0;
-    font-size: 15px;
-}
-
-.item-info a {
-    display: block;
-    color: #000;
 }

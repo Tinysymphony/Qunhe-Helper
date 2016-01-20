@@ -29,7 +29,7 @@ var _username = 'irobot',
 function createWindow() {
     // Create the browser window.
     mainWindow = new BrowserWindow({
-        width: 320, height: 450,
+        width: 320, height: 470,
         //   x: 0, y:0,
         transparent: true,
         autoHideMenuBar: true,
@@ -124,7 +124,7 @@ ipc.on('login', function(emitter, username, password){
         if(status){
             _username = username;
             _password = _password;
-            mainWindow.send('login-success')
+            mainWindow.send('login-success');
             httpHandler.getMessage(function(status, data){
                 if(status){
                     data = JSON.parse(data);
@@ -139,6 +139,10 @@ ipc.on('login', function(emitter, username, password){
             mainWindow.send('login-error');
         }
     });
+});
+
+ipc.on('test', function(emitter){
+    mainWindow.send('login-success');
 });
 
 function _getInfo(target){

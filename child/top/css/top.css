@@ -1,6 +1,7 @@
 html {
     min-height: none;
     /*overflow: hidden;*/
+    background: url('../../../img/bg.png');
 }
 
 .item {
@@ -15,6 +16,10 @@ html {
 
 .item-name {
     margin-left: 40px;
+}
+
+.main {
+    margin-top: 120px;   
 }
 
 .main-list {

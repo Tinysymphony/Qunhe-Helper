@@ -22,6 +22,7 @@ div.tiny {
 
 
 .img {
+    position: relative;
     text-align: center;
     margin-top: 30px;
     width: 104px;
@@ -36,6 +37,28 @@ div.tiny {
 .img:hover {
     border-color: #00B9EA;
 }
+
+.img:hover .drag {
+    top: 80px;
+}
+
+.drag {
+    display: none;
+    position: absolute;
+    top: 120px;
+    left: 10px;
+    width: 80px;
+    height: 80px;
+    text-align: center;
+    background-color: #00B9EA;
+    border-radius: 50%;
+    transition: 0.5s;
+}
+
+.mouse-on {
+    top: 40px;
+}
+
 
 .tiny img {
     width: 100px;
