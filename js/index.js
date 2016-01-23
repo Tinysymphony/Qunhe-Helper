@@ -19,8 +19,8 @@ $(function(){
             $loginBtn.addClass('disabled');
             var username = $('.username').val(),
                 password = $('.password').val();
-            // ipc.send('login', username, password);
-            ipc.send('test');
+            ipc.send('login', username, password);
+            // ipc.send('test');
         }
     }).on('click', '.login', function(){
         //handle click event on login button
@@ -76,7 +76,7 @@ function loginError(){
 
 function move(){
     $('.tiny').animate({
-        'margin-top': 160
+        'margin-top': 180
     }, 300);
 
     $('.img img').css({

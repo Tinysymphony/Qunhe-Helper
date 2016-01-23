@@ -3,6 +3,7 @@
 const electron = require('electron');
 
 const httpHandler = require('./js/util/httpHandler');
+const CONST = require('./js/const.js');
 
 const ipc = electron.ipcMain;
 // const dockMenu = require('./func/dock-menu');
@@ -47,6 +48,7 @@ function createWindow() {
         // Dereference the window object, usually you would store windows
         // in an array if your app supports multi windows, this is the time
         // when you should delete the corresponding element.
+        // newWindows = null;
         mainWindow = null;
     });
 
@@ -55,8 +57,6 @@ function createWindow() {
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 app.on('ready', function () {
-
-    // console.log(size.width + ' ' + size.height);
     createWindow();
 });
 
@@ -96,13 +96,20 @@ ipc.on('start-new', function(emitter, name, url, options){
     });
 });
 
-ipc.on('ask-for-data', function(emitter, name){
+ipc.on('ask-for-data', function(emitter, name, type){
     switch (name) {
         case 'task':
             _getTask(newWindows[name]);
             break;
         case 'bug':
-            _getBug(newWindows[name]);
+            if(type === 'his-bug'){
+                // _getBug(newWindows[name], CONST.SOLVED_BUG);
+                _getBug(newWindows[name], CONST.CLOSED_BUG, CONST.RESOLVED_BUG);
+            } else if(type === 'rank-bug') {
+                _rankBug(newWindows[name]);
+            } else {
+                _getBug(newWindows[name], CONST.OPEN_BUG);
+            }
             break;
         case 'message':
             _getMessage(newWindows[name]);
@@ -119,7 +126,6 @@ ipc.on('ask-for-data', function(emitter, name){
 });
 
 ipc.on('login', function(emitter, username, password){
-    // console.log(username);
     httpHandler.login(username, password, function(status){
         if(status){
             _username = username;
@@ -145,11 +151,12 @@ ipc.on('test', function(emitter){
     mainWindow.send('login-success');
 });
 
+// functions
+
 function _getInfo(target){
     httpHandler.getInfo(function(status, data){
         if(status){
             data = JSON.parse(data);
-            console.log(data);
             target.send('load-info', data);
             _info = data;
         }else {
@@ -177,7 +184,6 @@ function _getMessage(target){
         if(status){
             data = JSON.parse(data);
             _message = data;
-            console.log(data);
             target.send('load-message', data);
             mainWindow.send('render-message', data, false);
         } else {
@@ -188,19 +194,44 @@ function _getMessage(target){
 }
 
 function _getBug(target){
-    console.log('bug');
-    console.log(_username);
-    httpHandler.getBug(_username, function(status, data){
+    var query = '(';
+    for(var i = 0; i < arguments.length - 1; i++){
+        if(i != arguments.length - 2){
+            query += 'status = ' + arguments[i + 1] + ' OR ';
+        } else {
+            query += 'status = ' + arguments[i + 1] + ')';
+        }
+    }
+    httpHandler.getBug(_username, query, function(status, data){
         if(status){
             data = smallerBug(data);
-            console.log(data);
             _bug = data;
             target.send('load-bug', data);
         } else {
             _bug = null;
             target.send('load-fail');
         }
+    });
+}
 
+function _rankBug(target){
+    httpHandler.getAllBugs(function(status, data){
+        if(status){
+            var rank = {};
+            console.log(data.totoal);
+            for(var i = 0; i < data.total; i++){
+                console.log(i);
+                if(rank[data.issues[i].assignee]){
+                    rank[data.issues[i].assignee] += 1;
+                } else {
+                    rank[data.issues[i].assignee] = 1;
+                }
+            }
+            console.log(rank);
+            target.send('load-rank', rank);
+        } else {
+            target.send('load-fail');
+        }
     });
 }
 
@@ -220,14 +251,18 @@ function smallerTask(data){
 }
 
 function smallerBug(data){
-    var result = [];
+    console.log(data);
     data = JSON.parse(data);
-    for(var i = 0; i < data.length; i++){
+    var result = {};
+    result.bugs = [];
+    result.total = data.total;
+    for(var i = 0; i < data.total; i++){
         var tmp = {
-            "key": data[i]["key"],
-            "summary": data[i]["fields"]["summary"]
-        }
-        result.push(tmp);
+            "key": data.issues[i]["key"],
+            "title": data.issues[i]["fields"]["summary"],
+            "link": "http://jira.qunhequnhe.com/browse/" + data.issues[i]["key"]
+        };
+        result.bugs.push(tmp);
     }
     return JSON.stringify(result);
 }

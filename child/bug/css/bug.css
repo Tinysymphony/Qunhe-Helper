@@ -26,22 +26,39 @@ html {
     cursor: pointer;
 }
 
+.main-list {
+    margin-top: 120px;
+}
+
 .item {
     margin-top: 20px;
-    width: 340px;
-    /*height: 40px;*/
-    line-height: 20px;
-    background-color: #fff;
+    width: 80%;
+    height: 40px;
+    margin-left: 10%;
+    line-height: 40px;
+    background-color: #e0e0e0;
+    color: #505050;
     border-radius: 5px;
-    box-shadow: 0 1px 3px #333;
-    padding: 10px;
     cursor: pointer;
+    padding-right: 30px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    transition: 0.3s;
 }
+
+.item:hover {
+    background-color: #81C7D4;
+    color: #FFF;
+    box-shadow: 0px 0px 10px -3px rgba(0,0,0,0.75);
+}
+
 
 .item a {
     margin-top: 10px;
-    font-size: 12px;
-    transition: 0.5s;
+    /*max-width: 300px;*/
+
+    font-size: 14px;
     cursor: pointer;
 }
 

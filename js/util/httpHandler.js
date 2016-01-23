@@ -32,9 +32,18 @@ function _getTask(callback){
     _base(options, callback);
 }
 
-function _getBug(name, callback){
+function _getBug(name, queryStatus, callback){
     var options = {
-        url: 'http://jira.qunhequnhe.com/rest/api/2/search?jql=issuetype = Bug AND status = Open AND assignee in (' + name + ')',
+        url: 'http://jira.qunhequnhe.com/rest/api/2/search?jql=issuetype = Bug AND ' + queryStatus + ' AND assignee in (' + name + ')',
+        method: 'GET',
+        jar: globalJar
+    };
+    _base(options, callback);
+}
+
+function _getAllBugs(callback){
+    var options = {
+        url: 'http://jira.qunhequnhe.com/rest/api/2/search?jql=issuetype = Bug',
         method: 'GET',
         jar: globalJar
     };
@@ -67,6 +76,7 @@ var Handler = {
     getInfo: _getInfo,
     getTask: _getTask,
     getBug: _getBug,
+    getAllBugs: _getAllBugs,
     getMessage: _getMessage
 };
 
