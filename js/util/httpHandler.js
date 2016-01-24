@@ -1,7 +1,12 @@
+// Using http request to get data in json format.
+
 var req = require('request');
 var globalJar = req.jar();
 
-function _login(username, password, callback){
+// url and method can be maintained in the const.js
+// const URL = require('../const').URL;
+
+function _login(username, password, onSuccess, onFail){
     var options = {
         url: 'http://jira.qunhequnhe.com/rest/auth/1/session',
         method: 'POST',
@@ -11,62 +16,63 @@ function _login(username, password, callback){
         },
         jar: globalJar
     };
-    _base(options, callback);
+    _base(options, onSuccess, onFail);
 }
 
-function _getInfo(callback){
+function _getInfo(onSuccess, onFail){
     var options = {
         url: 'http://jira.qunhequnhe.com/rest/api/2/myself',
         method: 'GET',
         jar: globalJar
     };
-    _base(options, callback);
+    _base(options, onSuccess, onFail);
 }
 
-function _getTask(callback){
+function _getTask(onSuccess, onFail){
     var options = {
         url: 'http://jira.qunhequnhe.com/rest/api/2/project',
         method: 'GET',
         jar: globalJar
     };
-    _base(options, callback);
+    _base(options, onSuccess, onFail);
 }
 
-function _getBug(name, queryStatus, callback){
+function _getBug(name, queryStatus, onSuccess, onFail){
     var options = {
         url: 'http://jira.qunhequnhe.com/rest/api/2/search?jql=issuetype = Bug AND ' + queryStatus + ' AND assignee in (' + name + ')',
         method: 'GET',
         jar: globalJar
     };
-    _base(options, callback);
+    _base(options, onSuccess, onFail);
 }
 
-function _getAllBugs(callback){
+function _getAllBugs(onSuccess, onFail){
     var options = {
         url: 'http://jira.qunhequnhe.com/rest/api/2/search?jql=issuetype = Bug',
         method: 'GET',
         jar: globalJar
     };
-    _base(options, callback);
+    _base(options, onSuccess, onFail);
 }
 
-function _getMessage(callback){
+function _getMessage(onSuccess, onFail){
     var options = {
         url: 'http://10.10.31.222/api/notice',
         method: 'GET',
         jar: globalJar
     };
-    _base(options, callback);
+    _base(options, onSuccess, onFail);
 }
 
-function _base(options, callback){
-    //guozi
-    // return callback(true);
+// basic logic
+function _base(options, onSuccess, onFail){
     req(options, function(err, res, body){
-        if(!err && res.statusCode === 200){
-            callback(true, body);
+        if(!err && res.statusCode === 200 && onSuccess && typeof onSuccess === 'function'){
+            onSuccess(JSON.parse(body));
         } else {
-            callback(false, body);
+            if(onFail && typeof onFail === 'function'){
+                onFail(body);
+            }
         }
     });
 }

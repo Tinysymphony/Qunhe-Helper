@@ -37,23 +37,11 @@ $(function(){
     }).on('focus', '.info input', function(){
         $(this).select();
     });
-    // todo: click and drag bug
-    // on('mousedown', '.img img', function(){
-    //
-    // }).on('mousemove', '.img img', function(){
-    //
-    // }).on('mouseup', '.img img', function(){
-    //
-    // });
 
     ipc.on('login-success', loginSuccess);
     ipc.on('login-error', loginError);
     ipc.on('load-info', uploadInfo);
     ipc.on('render-message', renderMessage);
-
-    // bindImageAction();
-
-    // setTimeout(tmp_render, 22000);
 });
 
 function loginSuccess(){
