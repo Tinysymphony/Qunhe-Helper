@@ -3,13 +3,11 @@
 var httpHandler = require('./httpHandler');
 const SEND = require('../const.js').SEND;
 
-var _username = '';
+var _username = '',
+    _basicBugLink = "http://jira.qunhequnhe.com/browse/";
 
 function _login(username, password, window){
-    httpHandler.login(username, password, function(status){
-        _username = username;
-        window._username = username;
-        window._password = password;
+    httpHandler.login(username, password, function(){
         window.send(SEND.LOGIN_SUCCESS);
         httpHandler.getMessage(function(data){
             window.send(SEND.RENDER_MESSAGE, data, true);
@@ -81,14 +79,16 @@ function _rankBug(target){
         var rank = {};
         console.log(data.totoal);
         for(var i = 0; i < data.total; i++){
-            console.log(i);
+            // console.log(data.issues[i]);
+            if(!data.issues[i].assignee){
+                continue;
+            }
             if(rank[data.issues[i].assignee]){
                 rank[data.issues[i].assignee] += 1;
             } else {
                 rank[data.issues[i].assignee] = 1;
             }
         }
-        console.log(rank);
         window.send(SEND.LOAD_RANK, rank);
     }, function(){
         window.send(SEND.LOAD_FAILED);
@@ -107,7 +107,7 @@ function _simplifyTask(data){
         };
         result.push(tmp);
     }
-    return JSON.stringify(result);
+    return result;
 }
 
 // Extract the attributes of bugs that we need, such as key, title, description and JIRA link.
@@ -119,11 +119,11 @@ function _simplifyBug(data){
         var tmp = {
             "key": data.issues[i]["key"],
             "title": data.issues[i]["fields"]["summary"],
-            "link": "http://jira.qunhequnhe.com/browse/" + data.issues[i]["key"]
+            "link":  _basicBugLink + data.issues[i]["key"]
         };
         result.bugs.push(tmp);
     }
-    return JSON.stringify(result);
+    return result;
 }
 
 var DataHander = {

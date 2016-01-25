@@ -16,7 +16,7 @@ function _login(username, password, onSuccess, onFail){
         },
         jar: globalJar
     };
-    _base(options, onSuccess, onFail);
+    _base(options, onSuccess, onFail, true);
 }
 
 function _getInfo(onSuccess, onFail){
@@ -65,10 +65,14 @@ function _getMessage(onSuccess, onFail){
 }
 
 // basic logic
-function _base(options, onSuccess, onFail){
+function _base(options, onSuccess, onFail, noParse){
     req(options, function(err, res, body){
         if(!err && res.statusCode === 200 && onSuccess && typeof onSuccess === 'function'){
-            onSuccess(JSON.parse(body));
+            if(noParse){
+                onSuccess(body);
+            } else {
+                onSuccess(JSON.parse(body));
+            }
         } else {
             if(onFail && typeof onFail === 'function'){
                 onFail(body);

@@ -1,17 +1,19 @@
 var $ = require('jquery');
 const ipc = require('electron').ipcRenderer;
+const ACTION = require('../../js/const').ACTION;
 var notice = require('../../js/util/notification');
 
 var message = [],
     messageCount;
 
 $(function(){
-    ipc.send('ask-for-data', 'message');
+    ipc.send(ACTION.DATA_REQUEST, 'message');
     ipc.on('load-message', function(emitter, data){
         message = data.messages;
         messageCount = data.count;
         noticeMessage();
         renderMessage();
+        // renderDot();
     });
 });
 

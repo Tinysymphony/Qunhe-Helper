@@ -31,17 +31,17 @@ html {
 }
 
 .item {
+    position: relative;
     margin-top: 20px;
     width: 80%;
     height: 40px;
     margin-left: 10%;
     line-height: 40px;
+    /*padding: 10px 10px;*/
     background-color: #e0e0e0;
     color: #505050;
     border-radius: 5px;
     cursor: pointer;
-    padding-right: 30px;
-    overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
     transition: 0.3s;
@@ -55,9 +55,11 @@ html {
 
 
 .item a {
-    margin-top: 10px;
-    /*max-width: 300px;*/
-
+    display: inline-block;
+    height: 40px;
+    max-width: 300px;
+    overflow: hidden;
+    text-overflow: ellipsis;
     font-size: 14px;
     cursor: pointer;
 }
@@ -88,3 +90,4 @@ p.item-content {
 .main-list {
     margin-bottom: 40px;
 }
+

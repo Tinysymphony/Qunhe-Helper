@@ -86,7 +86,8 @@ img {vertical-align: middle;}
 .red-point {
     position: absolute;
     display: none;
-    right: 50px;
+    right: 55px;
+    top: 30px;
     width: 25px;
     height: 25px;
     line-height: 25px;
@@ -94,6 +95,7 @@ img {vertical-align: middle;}
     color: #fff;
     border-radius: 50%;
     text-align: center;
+    z-index: 1000;
 }
 
 .header {

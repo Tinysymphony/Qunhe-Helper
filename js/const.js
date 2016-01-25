@@ -9,7 +9,8 @@ var CONST = {
         NEW_WINDOW: 'start-new',
         DATA_REQUEST: 'ask-for-data',
         LOGIN: 'login',
-        LOGIN_TEST: 'test'
+        LOGIN_TEST: 'test',
+        RENDER_DOT: 'render-dot'
     },
     // New windows
     WINDOW: {
@@ -43,9 +44,12 @@ var CONST = {
         LOAD_BUG: 'load-bug',
         LOAD_RANK: 'load-rank',
         LOAD_MESSAGE: 'load-message',
+        LOAD_SETTINGS: 'load-settings',
         LOAD_FAILED: 'load-fail'
     },
     // Urls
 };
+
+// _createConstant(CONST);
 
 module.exports = CONST;

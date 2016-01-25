@@ -1,5 +1,7 @@
 'use strict';
 
+const fs = require('fs');
+
 const electron = require('electron');
 
 // Module to get event from application's view.
@@ -11,10 +13,14 @@ const app = electron.app;
 // Module to create native browser window.
 const BrowserWindow = electron.BrowserWindow;
 
+// Save user settings
+// const nconf = require('nconf');
+// nconf.file({file: './settings.json'});
+
 // Modules defined by Tiny (Guozi)
-const httpHandler = require('./js/util/httpHandler');
+// const httpHandler = require('./js/util/httpHandler');
 const dataHandler = require('./js/util/dataHandler');
-// Load Constants
+// Load Constants (Ps. these constants' property can be modified...)
 const CONST = require('./js/const.js'),
     MODE = CONST.MODE,
     ACTION = CONST.ACTION,
@@ -23,11 +29,16 @@ const CONST = require('./js/const.js'),
     TYPE = CONST.TYPE,
     SEND = CONST.SEND;
 
+var TEST_MODE = false,
+    DATA = null;
+
 // Using test mode
 if(process.argv[2] === MODE.TEST_MODE){
-    var  DATA = require('./js/data.js');
+    DATA = require('./js/data.js');
+    TEST_MODE = true;
 } else {
-    var DATA = null;
+    DATA = null;
+    TEST_MODE = false;
 }
 
 // Keep a global reference of the window object, if you don't, the window will
@@ -54,7 +65,6 @@ function createWindow() {
     });
     // and load the index.html of the app.
     mainWindow.loadURL('file://' + __dirname + '/index.html');
-
     // Open the DevTools.
     // mainWindow.webContents.openDevTools();
 
@@ -113,8 +123,40 @@ ipc.on(ACTION.NEW_WINDOW, function(emitter, name, url, options){
     });
 });
 
-// Router for handling data requests from the front-end.
+// Router for handling data requests from the front-end
 ipc.on(ACTION.DATA_REQUEST, function(emitter, name, type){
+    // Data render test
+    if(TEST_MODE){
+        switch (name) {
+            case WINDOW.TASK:
+                newWindows[name].send(SEND.LOAD_TASK, DATA.Task);
+                break;
+            case WINDOW.BUG:
+                if(type === TYPE.HISTROY_BUG){
+                    newWindows[name].send(SEND.LOAD_BUG, DATA.HistoryBug);
+                } else if(type === TYPE.RANK_BUG) {
+                    newWindows[name].send(SEND.LOAD_BUG, DATA.RankBug);
+                } else {
+                    newWindows[name].send(SEND.LOAD_BUG, DATA.Bug);
+                }
+                break;
+            case WINDOW.MESSAGE:
+                newWindows[name].send(SEND.LOAD_MESSAGE, DATA.Message);
+                mainWindow.send(SEND.RENDER_MESSAGE, DATA.Message);
+                break;
+            case WINDOW.INFO:
+                newWindows[name].send(SEND.LOAD_INFO, DATA.Info);
+                break;
+            case WINDOW.SETTINGS:
+                newWindows[name].send(SEND.LOAD_SETTINGS, DATA.Settings);
+                break;
+            default:
+                break;
+        }
+        return;
+    }
+
+    // Work mode
     switch (name) {
         case WINDOW.TASK:
             dataHandler.getTask(newWindows[name]);
@@ -144,126 +186,10 @@ ipc.on(ACTION.DATA_REQUEST, function(emitter, name, type){
 
 // Login with LDAP account
 ipc.on(ACTION.LOGIN, function(emitter, username, password){
+    if(TEST_MODE){
+        mainWindow.send(SEND.LOGIN_SUCCESS);
+        mainWindow.send(SEND.RENDER_MESSAGE, DATA.RenderMessage, true);
+        return;
+    }
     dataHandler.login(username, password, mainWindow);
 });
-
-// login in test mode
-ipc.on(ACTION.LOGIN_TEST, function(emitter){
-    console.log(DATA);
-    mainWindow.send(SEND.LOGIN_SUCCESS);
-});
-
-//////////////
-// function _getInfo(target){
-//     httpHandler.getInfo(function(status, data){
-//         if(status){
-//             data = JSON.parse(data);
-//             target.send('load-info', data);
-//             _info = data;
-//         }else {
-//             target.send('load-fail');
-//             _info = null;
-//         }
-//     });
-// }
-//
-// function _getTask(target){
-//     httpHandler.getTask(function(status, data){
-//         if(status){
-//             data = smallerTask(data);
-//             target.send('load-task', data);
-//             _task = data;
-//         }else {
-//             target.send(SEND.LOAD_FAILED);
-//             _task = null;
-//         }
-//     });
-// }
-//
-// function _getMessage(target){
-//     httpHandler.getMessage(function(status, data){
-//         if(status){
-//             data = JSON.parse(data);
-//             _message = data;
-//             target.send('load-message', data);
-//             mainWindow.send('render-message', data, false);
-//         } else {
-//             target.send('load-fail');
-//             _message = null;
-//         }
-//     });
-// }
-//
-// function _getBug(target){
-//     var query = '(';
-//     for(var i = 0; i < arguments.length - 1; i++){
-//         if(i != arguments.length - 2){
-//             query += 'status = ' + arguments[i + 1] + ' OR ';
-//         } else {
-//             query += 'status = ' + arguments[i + 1] + ')';
-//         }
-//     }
-//     httpHandler.getBug(_username, query, function(status, data){
-//         if(status){
-//             data = smallerBug(data);
-//             _bug = data;
-//             target.send('load-bug', data);
-//         } else {
-//             _bug = null;
-//             target.send('load-fail');
-//         }
-//     });
-// }
-//
-// function _rankBug(target){
-//     httpHandler.getAllBugs(function(status, data){
-//         if(status){
-//             var rank = {};
-//             console.log(data.totoal);
-//             for(var i = 0; i < data.total; i++){
-//                 console.log(i);
-//                 if(rank[data.issues[i].assignee]){
-//                     rank[data.issues[i].assignee] += 1;
-//                 } else {
-//                     rank[data.issues[i].assignee] = 1;
-//                 }
-//             }
-//             console.log(rank);
-//             target.send('load-rank', rank);
-//         } else {
-//             target.send('load-fail');
-//         }
-//     });
-// }
-//
-// function smallerTask(data){
-//     var result = [];
-//     data = JSON.parse(data);
-//     for(var i = 0; i < data.length; i++){
-//         var tmp = {
-//             "self": data[i]['self'],
-//             "key": data[i]['key'],
-//             "name": data[i]['name'],
-//             "id": data[i]['id']
-//         };
-//         result.push(tmp);
-//     }
-//     return JSON.stringify(result);
-// }
-//
-// function smallerBug(data){
-//     console.log(data);
-//     data = JSON.parse(data);
-//     var result = {};
-//     result.bugs = [];
-//     result.total = data.total;
-//     for(var i = 0; i < data.total; i++){
-//         var tmp = {
-//             "key": data.issues[i]["key"],
-//             "title": data.issues[i]["fields"]["summary"],
-//             "link": "http://jira.qunhequnhe.com/browse/" + data.issues[i]["key"]
-//         };
-//         result.bugs.push(tmp);
-//     }
-//     return JSON.stringify(result);
-// }
