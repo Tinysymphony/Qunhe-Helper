@@ -11,7 +11,9 @@ var CONST = {
         DATA_REQUEST: 'ask-for-data',
         LOGIN: 'login',
         LOGIN_TEST: 'test',
-        RENDER_DOT: 'render-dot'
+        RENDER_DOT: 'render-dot',
+        POLLING_MSG: 'polling-msg',
+        POLLING_BUG: 'polling-bug'
     },
     // New windows
     WINDOW: {
@@ -41,6 +43,8 @@ var CONST = {
         LOGIN_FAILED: 'login-error',
         RENDER_MESSAGE: 'render-message',
         RENDER_MESSAGE_ERROR: 'render-message-error',
+        RENDER_BUG: 'render-bug',
+        RENDER_BUG_ERROR: 'render-bug-error',
         LOAD_INFO: 'load-info',
         LOAD_TASK: 'load-task',
         LOAD_BUG: 'load-bug',

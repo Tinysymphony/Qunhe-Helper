@@ -8,6 +8,8 @@ var path = require('path'),
     nconf = require('nconf'),
     menuBinder = require('./js/menuBinder'),
     notice = require('./js/util/notification');
+
+const POLLING_TIME = 30000;
 // var infoBinder = require('./js/infoBinder');
 
 $(function () {
@@ -43,12 +45,17 @@ $(function () {
         $(this).select();
     });
 
+    // Ready will get user login data.
     ipc.send(ACTION.READY);
     ipc.on(SEND.DATA_PATH, autoInput);
+    // Login success will have a side effect: trigger polling on.
     ipc.on(SEND.LOGIN_SUCCESS, loginSuccess);
     ipc.on(SEND.LOGIN_FAILED, loginError);
     ipc.on(SEND.LOAD_INFO, uploadInfo);
     ipc.on(SEND.RENDER_MESSAGE, renderMessage);
+    ipc.on(SEND.RENDER_MESSAGE_ERROR, renderMessageError);
+    ipc.on(SEND.RENDER_BUG, renderBug);
+    ipc.on(SEND.RENDER_BUG_ERROR, renderBugError);
 });
 
 // get local settings and saved user info.
@@ -61,12 +68,14 @@ function autoInput(emitter, dataPath) {
 }
 
 function loginSuccess() {
+    // save user login data
     var user = {
         username: $('.username').val(),
         password: $('.password').val()
     };
     nconf.set('user', user);
     nconf.save();
+
     $('.login-success').css({display: 'block'});
     $('.tiny').css({
         'background': 'transparent',
@@ -98,11 +107,49 @@ function uploadInfo(emitter, data) {
     window.g_info = data;
 }
 
-function renderMessage(emitter, data, isShow) {
+function renderMessage(emitter, data, isShow, isLogin) {
     window.g_messageCount = data.count;
-    if (isShow) {
+    if (!nconf.get('message')) {
+        nconf.set('message', 0);
+    }
+    console.log(data.count);
+    if (isShow && (isLogin || data.count > nconf.get('message'))) {
         notice('留言提醒', '有' + window.g_messageCount + '条信息未读，请尽快查阅', '', '../../img/s.png');
     }
+    nconf.set('message', data.count);
+    nconf.save();
     $('.red-point').text(window.g_messageCount > 999 ? '...' : window.g_messageCount).css({display: 'block'});
     $('.J-message').text('留言板（' + window.g_messageCount + '）');
+    setTimeout(function () {
+        ipc.send(ACTION.POLLING_MSG);
+    }, POLLING_TIME);
+}
+
+function renderMessageError() {
+    setTimeout(function(){
+        ipc.send(ACTION.POLLING_MSG);
+    }, POLLING_TIME);
+}
+
+function renderBug(emitter, data, isShow, isLogin) {
+    var count  = data.bugs.length;
+    if(!nconf.get('bug')){
+        nconf.set('bug', 0);
+    }
+    console.log(count);
+    if(isShow && (isLogin || count > nconf.get('bug'))){
+        notice('Bug提醒', '有' + count + '个Bug等待处理，请及时修理 or 甩锅', '', '../../img/s.png');
+    }
+    nconf.set('message', count);
+    nconf.save();
+    $('.J-bug').text('我的BUG（' + count + '）');
+    setTimeout(function(){
+        ipc.send(ACTION.POLLING_BUG);
+    }, POLLING_TIME);
+}
+
+function renderBugError() {
+    setTimeout(function(){
+        ipc.send(ACTION.POLLING_BUG);
+    }, POLLING_TIME);
 }

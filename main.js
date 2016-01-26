@@ -15,9 +15,9 @@ console.log(app.getPath('userData'));
 const BrowserWindow = electron.BrowserWindow;
 
 // Save user settings
-//global.nconf = require('nconf');
-//nconf.file({file: path.join(app.getPath('userData'), 'settings.json')});
-var dataPath = path.join(app.getPath('userData'), 'settings.json');
+var nconf = require('nconf'),
+    dataPath = path.join(app.getPath('userData'), 'settings.json');
+nconf.file({file: dataPath});
 
 // Modules defined by Tiny (Guozi)
 // const httpHandler = require('./js/util/httpHandler');
@@ -36,14 +36,12 @@ var TEST_MODE = false,
 
 // Using test mode
 
-if(process.argv[2] === MODE.TEST_MODE){
+if (process.argv[2] === MODE.TEST_MODE) {
     DATA = require('./js/data.js');
     TEST_MODE = true;
 } else {
-    DATA = require('./js/data.js');
-    TEST_MODE = true;
-    // DATA = null;
-    // TEST_MODE = false;
+    DATA = null;
+    TEST_MODE = false;
 }
 
 // Keep a global reference of the window object, if you don't, the window will
@@ -60,7 +58,6 @@ var _username = 'irobot',
     _task = null;
 
 
-
 function createWindow() {
     // Create the browser window.
     mainWindow = new BrowserWindow({
@@ -73,7 +70,7 @@ function createWindow() {
     // and load the index.html of the app.
     mainWindow.loadURL('file://' + __dirname + '/index.html');
     // Open the DevTools.
-    mainWindow.webContents.openDevTools();
+    //mainWindow.webContents.openDevTools();
 
     // Emitted when the window is closed.
     mainWindow.on('closed', function () {
@@ -110,7 +107,7 @@ app.on('activate', function () {
 });
 
 // when the main window is rendered, send the data path.
-ipc.on(ACTION.READY, function(){
+ipc.on(ACTION.READY, function () {
     mainWindow.send(SEND.DATA_PATH, dataPath);
 });
 
@@ -120,33 +117,33 @@ ipc.on(ACTION.CLOSE_APP, function () {
 });
 
 // when items on the main menu is clicked, open a new window and save the reference.
-ipc.on(ACTION.NEW_WINDOW, function(emitter, name, url, options){
+ipc.on(ACTION.NEW_WINDOW, function (emitter, name, url, options) {
     // options.resizable = false;
     options.overlayScrollbars = true;
-    if(name === WINDOW.TOP){
+    if (name === WINDOW.TOP) {
         //link browser
         options.nodeIntegration = false;
     }
     newWindows[name] = new BrowserWindow(options);
     newWindows[name].loadURL(url);
     // newWindows[name].webContents.openDevTools();
-    newWindows[name].on('closed', function(){
+    newWindows[name].on('closed', function () {
         newWindows[name] = null;
     });
 });
 
 // Router for handling data requests from the front-end
-ipc.on(ACTION.DATA_REQUEST, function(emitter, name, type){
+ipc.on(ACTION.DATA_REQUEST, function (emitter, name, type) {
     // Data render test
-    if(TEST_MODE){
+    if (TEST_MODE) {
         switch (name) {
             case WINDOW.TASK:
                 newWindows[name].send(SEND.LOAD_TASK, DATA.Task);
                 break;
             case WINDOW.BUG:
-                if(type === TYPE.HISTROY_BUG){
+                if (type === TYPE.HISTROY_BUG) {
                     newWindows[name].send(SEND.LOAD_BUG, DATA.HistoryBug);
-                } else if(type === TYPE.RANK_BUG) {
+                } else if (type === TYPE.RANK_BUG) {
                     newWindows[name].send(SEND.LOAD_BUG, DATA.RankBug);
                 } else {
                     newWindows[name].send(SEND.LOAD_BUG, DATA.Bug);
@@ -174,35 +171,50 @@ ipc.on(ACTION.DATA_REQUEST, function(emitter, name, type){
             dataHandler.getTask(newWindows[name]);
             break;
         case WINDOW.BUG:
-            if(type === TYPE.HISTROY_BUG){
+            if (type === TYPE.HISTROY_BUG) {
                 dataHandler.getBug(newWindows[name], STATUS.CLOSED_BUG, STATUS.RESOLVED_BUG);
-            } else if(type === TYPE.RANK_BUG) {
+            } else if (type === TYPE.RANK_BUG) {
                 dataHandler.rankBug(newWindows[name]);
             } else {
                 dataHandler.getBug(newWindows[name], STATUS.OPEN_BUG);
             }
             break;
         case WINDOW.MESSAGE:
-            dataHandler.getMessage(newWindows[name]);
+            dataHandler.getMessage(newWindows[name], mainWindow);
             break;
         case WINDOW.INFO:
             dataHandler.getInfo(newWindows[name]);
             break;
         case WINDOW.SETTINGS:
-            // _getSettings(newWindows[name]);
-            // break;
+        // _getSettings(newWindows[name]);
+        // break;
         default:
             break;
     }
 });
 
 // Login with LDAP account
-ipc.on(ACTION.LOGIN, function(emitter, username, password){
+ipc.on(ACTION.LOGIN, function (emitter, username, password) {
     // Send Login Success message with the path to save user configurations.
-    if(TEST_MODE){
+    if (TEST_MODE) {
         mainWindow.send(SEND.LOGIN_SUCCESS);
-        mainWindow.send(SEND.RENDER_MESSAGE, DATA.RenderMessage, true);
+        mainWindow.send(SEND.RENDER_MESSAGE, DATA.RenderMessage, true, true);
+        mainWindow.send(SEND.RENDER_BUG, DATA.Bug, true, true);
         return;
     }
     dataHandler.login(username, password, mainWindow);
 });
+
+ipc.on(ACTION.POLLING_MSG, function () {
+    if(TEST_MODE) {
+        mainWindow.send(SEND.RENDER_MESSAGE, DATA.RenderMessage, true, false);
+    }
+    dataHandler.pollingMessage(mainWindow);
+});
+
+ipc.on(ACTION.POLLING_BUG, function(){
+    if(TEST_MODE) {
+        mainWindow.send(SEND.RENDER_BUG, DATA.Bug, true, false);
+    }
+    dataHandler.getBug(mainWindow);
+})
