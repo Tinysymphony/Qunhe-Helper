@@ -6,9 +6,9 @@ const SEND = require('../const.js').SEND;
 var _username = '',
     _basicBugLink = "http://jira.qunhequnhe.com/browse/";
 
-function _login(username, password, window, dataPath){
+function _login(username, password, window){
     httpHandler.login(username, password, function(){
-        window.send(SEND.LOGIN_SUCCESS, dataPath);
+        window.send(SEND.LOGIN_SUCCESS);
         httpHandler.getMessage(function(data){
             window.send(SEND.RENDER_MESSAGE, data, true);
         }, function(){

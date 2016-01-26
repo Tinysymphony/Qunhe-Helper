@@ -5,6 +5,7 @@ var CONST = {
     },
     // Actions
     ACTION: {
+        READY: 'ready',
         CLOSE_APP: 'close-app',
         NEW_WINDOW: 'start-new',
         DATA_REQUEST: 'ask-for-data',
@@ -35,6 +36,7 @@ var CONST = {
     },
     // Send message to front-end
     SEND: {
+        DATA_PATH: 'data-path',
         LOGIN_SUCCESS: 'login-success',
         LOGIN_FAILED: 'login-error',
         RENDER_MESSAGE: 'render-message',

@@ -73,7 +73,7 @@ function createWindow() {
     // and load the index.html of the app.
     mainWindow.loadURL('file://' + __dirname + '/index.html');
     // Open the DevTools.
-    //mainWindow.webContents.openDevTools();
+    mainWindow.webContents.openDevTools();
 
     // Emitted when the window is closed.
     mainWindow.on('closed', function () {
@@ -83,7 +83,6 @@ function createWindow() {
         // newWindows = null;
         mainWindow = null;
     });
-
 
 }
 
@@ -108,6 +107,11 @@ app.on('activate', function () {
     if (mainWindow === null) {
         createWindow();
     }
+});
+
+// when the main window is rendered, send the data path.
+ipc.on(ACTION.READY, function(){
+    mainWindow.send(SEND.DATA_PATH, dataPath);
 });
 
 // when the close button of the login window is pressed, close the application.
@@ -196,9 +200,9 @@ ipc.on(ACTION.DATA_REQUEST, function(emitter, name, type){
 ipc.on(ACTION.LOGIN, function(emitter, username, password){
     // Send Login Success message with the path to save user configurations.
     if(TEST_MODE){
-        mainWindow.send(SEND.LOGIN_SUCCESS, dataPath);
+        mainWindow.send(SEND.LOGIN_SUCCESS);
         mainWindow.send(SEND.RENDER_MESSAGE, DATA.RenderMessage, true);
         return;
     }
-    dataHandler.login(username, password, mainWindow, dataPath);
+    dataHandler.login(username, password, mainWindow);
 });
