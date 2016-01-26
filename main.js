@@ -1,7 +1,7 @@
 'use strict';
 
 const fs = require('fs');
-
+const path = require('path');
 const electron = require('electron');
 
 // Module to get event from application's view.
@@ -10,12 +10,14 @@ const ipc = electron.ipcMain;
 // Module to control application life.
 const app = electron.app;
 
+console.log(app.getPath('userData'));
 // Module to create native browser window.
 const BrowserWindow = electron.BrowserWindow;
 
 // Save user settings
-// const nconf = require('nconf');
-// nconf.file({file: './settings.json'});
+//global.nconf = require('nconf');
+//nconf.file({file: path.join(app.getPath('userData'), 'settings.json')});
+var dataPath = path.join(app.getPath('userData'), 'settings.json');
 
 // Modules defined by Tiny (Guozi)
 // const httpHandler = require('./js/util/httpHandler');
@@ -33,17 +35,20 @@ var TEST_MODE = false,
     DATA = null;
 
 // Using test mode
+
 if(process.argv[2] === MODE.TEST_MODE){
     DATA = require('./js/data.js');
     TEST_MODE = true;
 } else {
-    DATA = null;
-    TEST_MODE = false;
+    DATA = require('./js/data.js');
+    TEST_MODE = true;
+    // DATA = null;
+    // TEST_MODE = false;
 }
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
-let mainWindow;
+var mainWindow;
 // Global References of new windows created by the mainWindow.
 var newWindows = {};
 
@@ -53,6 +58,8 @@ var _username = 'irobot',
     _bug = null,
     _message = null,
     _task = null;
+
+
 
 function createWindow() {
     // Create the browser window.
@@ -66,7 +73,7 @@ function createWindow() {
     // and load the index.html of the app.
     mainWindow.loadURL('file://' + __dirname + '/index.html');
     // Open the DevTools.
-    // mainWindow.webContents.openDevTools();
+    mainWindow.webContents.openDevTools();
 
     // Emitted when the window is closed.
     mainWindow.on('closed', function () {
@@ -76,6 +83,7 @@ function createWindow() {
         // newWindows = null;
         mainWindow = null;
     });
+
 
 }
 
@@ -186,10 +194,11 @@ ipc.on(ACTION.DATA_REQUEST, function(emitter, name, type){
 
 // Login with LDAP account
 ipc.on(ACTION.LOGIN, function(emitter, username, password){
+    // Send Login Success message with the path to save user configurations.
     if(TEST_MODE){
-        mainWindow.send(SEND.LOGIN_SUCCESS);
+        mainWindow.send(SEND.LOGIN_SUCCESS, dataPath);
         mainWindow.send(SEND.RENDER_MESSAGE, DATA.RenderMessage, true);
         return;
     }
-    dataHandler.login(username, password, mainWindow);
+    dataHandler.login(username, password, mainWindow, dataPath);
 });

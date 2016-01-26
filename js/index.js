@@ -4,11 +4,12 @@ const $ = require('jquery');
 const SEND = require('./js/const.js').SEND;
 const ACTION = require('./js/const.js').ACTION;
 
+console.log(__dirname);
+
 // get local settings
-const nconf = require('nconf');
-nconf.file({file: './settings.json'});
 
 var path = require('path'),
+    nconf = require('nconf'),
     menuBinder = require('./js/menuBinder'),
     notice= require('./js/util/notification');
 // var infoBinder = require('./js/infoBinder');
@@ -47,8 +48,10 @@ $(function(){
         $(this).select();
     });
 
-    $username.val(nconf.get('user').username);
-    $password.val(nconf.get('user').password);
+    // if(global.nconf.get('user')){
+    //     $username.val(global.nconf.get('user').username);
+    //     $password.val(global.nconf.get('user').password);
+    // }
 
     ipc.on(SEND.LOGIN_SUCCESS, loginSuccess);
     ipc.on(SEND.LOGIN_FAILED, loginError);
@@ -56,12 +59,14 @@ $(function(){
     ipc.on(SEND.RENDER_MESSAGE, renderMessage);
 });
 
-function loginSuccess(){
+function loginSuccess(emitter, dataPath){
     // var about = 'file://' + path.join(__dirname, 'child/about/about.html');
     var user = {
         username: $('.username').val(),
         password: $('.password').val()
     };
+
+    nconf.file({file: dataPath});
     nconf.set('user', user);
     nconf.save();
 
@@ -69,7 +74,7 @@ function loginSuccess(){
     $('.tiny').css({
         'background': 'transparent',
         'border': 0,
-        'box-shadow': 'none',
+        'box-shadow': 'none'
     });
     $('.close, .return, .info').remove();
     $('.drag').css({display: 'block'});
