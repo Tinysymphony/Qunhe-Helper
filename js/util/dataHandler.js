@@ -9,6 +9,7 @@ var _username = '',
 
 function _login(username, password, window) {
     httpHandler.login(username, password, function () {
+        _username = username;
         window.send(SEND.LOGIN_SUCCESS);
 
         // Send unread messages and trigger polling
@@ -19,11 +20,17 @@ function _login(username, password, window) {
         });
 
         // Send unsolved bugs and trigger polling
-        httpHandler.getBug(username, STATUS.OPEN_BUG, function () {
-            window.send(SEND.RENDER_BUG, data, true, true);
-        }, function () {
+        var queryStatus = '(status = ' + STATUS.OPEN_BUG + ' OR status = '+ STATUS.REOPENED_BUG + ')';
+        httpHandler.getBug(username, queryStatus, function(data){
+            window.send(SEND.RENDER_BUG, data.total, true, true);
+        }, function(){
             window.send(SEND.RENDER_BUG_ERROR);
         });
+        //httpHandler.getBug(username, STATUS.OPEN_BUG, function () {
+        //    window.send(SEND.RENDER_BUG, data, true, true);
+        //}, function () {
+        //    window.send(SEND.RENDER_BUG_ERROR);
+        //});
 
     }, function () {
         window.send(SEND.LOGIN_FAILED);
@@ -75,7 +82,9 @@ function _getBug(window) {
             query += 'status = ' + arguments[i + 1] + ')';
         }
     }
+    console.log(query);
     httpHandler.getBug(_username, query, function (data) {
+        console.log(data);
         data = _simplifyBug(data);
         window.send(SEND.LOAD_BUG, data);
     }, function () {

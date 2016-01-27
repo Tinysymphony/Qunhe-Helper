@@ -29,7 +29,8 @@ var CONST = {
     STATUS: {
         OPEN_BUG: 'Open',
         CLOSED_BUG: 'Closed',
-        RESOLVED_BUG: 'Resolved'
+        RESOLVED_BUG: 'Resolved',
+        REOPENED_BUG: 'Reopened'
     },
     // Detailed Data Type
     TYPE: {

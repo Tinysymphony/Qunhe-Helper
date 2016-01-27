@@ -38,6 +38,7 @@ function _getTask(onSuccess, onFail){
 }
 
 function _getBug(name, queryStatus, onSuccess, onFail){
+    console.log(queryStatus);
     var options = {
         url: 'http://jira.qunhequnhe.com/rest/api/2/search?jql=issuetype = Bug AND ' + queryStatus + ' AND assignee in (' + name + ')',
         method: 'GET',
@@ -66,14 +67,17 @@ function _getMessage(onSuccess, onFail){
 
 // basic logic
 function _base(options, onSuccess, onFail, noParse){
+    console.log(options);
     req(options, function(err, res, body){
         if(!err && res.statusCode === 200 && onSuccess && typeof onSuccess === 'function'){
+            console.log(new Date() + ': get data √');
             if(noParse){
                 onSuccess(body);
             } else {
                 onSuccess(JSON.parse(body));
             }
         } else {
+            console.log(new Date() + ': error x ----- ' + err);
             if(onFail && typeof onFail === 'function'){
                 onFail(body);
             }

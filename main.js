@@ -40,6 +40,8 @@ if (process.argv[2] === MODE.TEST_MODE) {
     DATA = require('./js/data.js');
     TEST_MODE = true;
 } else {
+    //DATA = require('./js/data.js');
+    //TEST_MODE = true;
     DATA = null;
     TEST_MODE = false;
 }
@@ -176,7 +178,7 @@ ipc.on(ACTION.DATA_REQUEST, function (emitter, name, type) {
             } else if (type === TYPE.RANK_BUG) {
                 dataHandler.rankBug(newWindows[name]);
             } else {
-                dataHandler.getBug(newWindows[name], STATUS.OPEN_BUG);
+                dataHandler.getBug(newWindows[name], STATUS.OPEN_BUG, STATUS.REOPENED_BUG);
             }
             break;
         case WINDOW.MESSAGE:
@@ -216,5 +218,5 @@ ipc.on(ACTION.POLLING_BUG, function(){
     if(TEST_MODE) {
         mainWindow.send(SEND.RENDER_BUG, DATA.Bug, true, false);
     }
-    dataHandler.getBug(mainWindow);
-})
+    dataHandler.getBug(mainWindow, STATUS.OPEN, STATUS.REOPENED_BUG);
+});

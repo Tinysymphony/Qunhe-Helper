@@ -132,7 +132,7 @@ function renderMessageError() {
 }
 
 function renderBug(emitter, data, isShow, isLogin) {
-    var count  = data.bugs.length;
+    var count  = data;
     if(!nconf.get('bug')){
         nconf.set('bug', 0);
     }
