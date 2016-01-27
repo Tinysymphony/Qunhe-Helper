@@ -1,10 +1,10 @@
+// const
 const ipc = require('electron').ipcRenderer;
 const shell = require('electron').shell;
 const WINDOW = 'bug';
 const ACTION = require('../../js/const').ACTION;
 const SEND = require('../../js/const').SEND;
 
-// const
 var $ = require('jquery');
 
 var stage = 'bug';
@@ -18,7 +18,6 @@ $(function(){
 
     $('.main-list').on('click', '.item', function(){
         var url = $(this).data('url');
-        //$(this).append('<p>sfasf</p>');
         shell.openExternal(url);
     });
 
@@ -28,9 +27,8 @@ $(function(){
         $this.addClass('focus').siblings().removeClass('focus');
         ipc.send(ACTION.DATA_REQUEST, WINDOW, $this.data('type'));
     }).on('click', '.J-refresh', function(){
-        ipc.send(ACTION.DATA_REQUEST, WINDOW, $('.tab-item.focus').data('type'));
-    })
-
+        ipc.send(ACTION.DATA_REQUEST, WINDOW, $('.focus').data('type'));
+    });
 
 });
 

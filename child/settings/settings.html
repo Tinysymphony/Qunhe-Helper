@@ -4,6 +4,7 @@
         <meta charset="utf-8">
         <title>用户偏好设置</title>
         <link rel="stylesheet" href="../../css/basic.css" media="screen" title="no title" charset="utf-8">
+        <link rel="stylesheet" href="../../css/checkbox.css" media="screen" title="no title" charset="utf-8">
         <link rel="stylesheet" href="../../css/font-awesome.min.css" media="screen" title="no title" charset="utf-8">
         <!-- <link rel="stylesheet" href="../../css/child.css" media="screen" title="no title" charset="utf-8"> -->
         <link rel="stylesheet" href="css/settings.css" media="screen" title="no title" charset="utf-8">
@@ -12,9 +13,46 @@
         <header class="header box-shadow1">
             <h2 class="title"><i class="icon-cog mr10"></i>Settings</h2>
         </header>
-        <footer>
+        <div class="settings">
+            <section class="msg sec">
+                <h3 class="s-title"><i class="icon-comment mr10"></i>消息提醒</h3>
+                <form class="ac-custom ac-checkbox ac-checkmark" autocomplete="off">
+                    <h4></h4>
+                    <ul>
+                        <li><input id="cb6" name="cb6" type="checkbox"><label for="cb6">Bug推送 Enable Bug Notifications</label></li>
+                        <li><input id="cb7" name="cb7" type="checkbox"><label for="cb7">消息推送 Enable Message Notifications</label></li>
+                        <li><input id="cb8" name="cb8" type="checkbox"><label for="cb8">接受私信 Accept Message</label></li>
+                    </ul>
 
+                </form>
+                <form class="ac-custom ac-radio ac-circle" autocomplete="off">
+                    <h3>定时推送和同步时间</h3>
+                    <ul>
+                        <li><input id="r5" name="time" type="radio"><label for="r5">9:30 AM 早晨干活前提醒</label></li>
+                        <li><input id="r6" name="time" type="radio"><label for="r6">11:00 AM 吃饭前提醒</label></li>
+                        <li><input id="r7" name="time" type="radio"><label for="r7">17:00 PM 午后提醒</label></li>
+                        <li><input id="r8" name="time" type="radio"><label for="r8">18:00 PM 下班时提醒</label></li>
+                    </ul>
+                </form>
+            </section>
+            <section class="account sec">
+                <h3 class="s-title"><i class="icon-user mr10"></i>账户</h3>
+
+            </section>
+            <section class="appearance sec">
+                <h3 class="s-title"><i class="icon-cogs mr10"></i>界面外观 & 主题 </h3>
+                <p class="fs14">TODO: Feature of future version</p>
+            </section>
+        </div>
+        <footer class="ft">
+            <div class="ft-left fl">
+                <a href="javascript:;" class="setting-btn cancel-btn center">取消 Cancel</a>
+            </div>
+            <div class="ft-right fl">
+                <a href="javascript:;" class="setting-btn save-btn center">保存 Save</a>
+            </div>
         </footer>
         <script src="js/settings.js" charset="utf-8"></script>
+        <script src="../../js/svgcheckbox.js" charset="utf-8"></script>
     </body>
 </html>

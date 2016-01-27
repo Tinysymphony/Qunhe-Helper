@@ -61,6 +61,13 @@ img {vertical-align: middle;}
 .w400 {width: 400px;}
 .w500 {width: 500px;}
 
+.fs10 {font-size: 10px;}
+.fs12 {font-size: 12px;}
+.fs14 {font-size: 14px;}
+.fs16 {font-size: 16px;}
+.fs18 {font-size: 18px;}
+.fs20 {font-size: 20px;}
+
 .none {
     display: none;
     width: 0;

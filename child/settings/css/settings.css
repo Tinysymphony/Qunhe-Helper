@@ -1,0 +1,60 @@
+html {
+    /*background: #aabbcc;*/
+}
+
+.settings {
+    margin-top: 120px;
+    padding: 0 5%;
+    color: #666;
+}
+
+.settings input {
+    color: #2BB8AA;
+    background-color: #2BB8AA;
+    border-color: #2BB8AA;
+}
+
+.sec {
+    margin-bottom: 30px;
+}
+
+.sec .s-title {
+    border-bottom: 1px solid #ddd;
+    padding: 10px 0;
+    font-size: 16px;
+}
+
+.ft {
+    padding: 30px 5%;
+    overflow: hidden;
+}
+
+.ft-left {
+    width: 50%;
+}
+
+.ft-right {
+    width: 50%;
+}
+
+.setting-btn {
+    display: block;
+    box-sizing: border-box;
+    height: 30px;
+    width: 130px;
+    line-height: 30px;
+    font-size: 14px;
+    border-radius: 100px;
+    text-align: center;
+}
+
+.save-btn {
+    background-color: #2BB8AA;
+    color: #FFFFFF;
+}
+
+.cancel-btn {
+    border: 1px solid #2BB8AA;
+    color: #2BB8AA;
+}
+

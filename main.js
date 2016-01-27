@@ -209,6 +209,7 @@ ipc.on(ACTION.LOGIN, function (emitter, username, password) {
 ipc.on(ACTION.POLLING_MSG, function () {
     if(TEST_MODE) {
         mainWindow.send(SEND.RENDER_MESSAGE, DATA.RenderMessage, isNotify, false);
+        return;
     }
     dataHandler.pollingMessage(mainWindow);
 });
@@ -216,6 +217,7 @@ ipc.on(ACTION.POLLING_MSG, function () {
 ipc.on(ACTION.POLLING_BUG, function(){
     if(TEST_MODE) {
         mainWindow.send(SEND.RENDER_BUG, DATA.Bug.total, isNotify, false);
+        return;
     }
     dataHandler.getBug(mainWindow, TYPE.BUG, STATUS.OPEN, STATUS.REOPENED_BUG);
 });
