@@ -7,30 +7,14 @@ const SEND = require('../../js/const').SEND;
 // const
 var $ = require('jquery');
 
-var list = [];
+var stage = 'bug';
 
 $(function(){
     $('.li-bug').addClass('focus');
 
     ipc.send(ACTION.DATA_REQUEST, WINDOW);
-    ipc.on(SEND.LOAD_BUG, function(emitter, data){
-        console.log(data);
-        if(data.bugs){
-            list = data.bugs;
-            updateList();
-        } else {
-            list = data.ranks;
-            updateRank();
-        }
-    });
-
-    ipc.on(SEND.LOAD_RANK, function(emitter, data){
-        for(var i in data){
-            if(data.hasOwnProperty(i)){
-                console.log(i + ': ' + data[i]);
-            }
-        }
-    });
+    ipc.on(SEND.LOAD_BUG, updateBugList);
+    ipc.on(SEND.LOAD_RANK, loadRank);
 
     $('.main-list').on('click', '.item', function(){
         var url = $(this).data('url');
@@ -40,12 +24,29 @@ $(function(){
 
     $('.header').on('click', '.tab-item', function(){
         var $this = $(this);
+        stage = $(this).data('type');
         $this.addClass('focus').siblings().removeClass('focus');
-        ipc.send('ask-for-data', WINDOW, $this.data('type'));
-    });
+        ipc.send(ACTION.DATA_REQUEST, WINDOW, $this.data('type'));
+    }).on('click', '.J-refresh', function(){
+        ipc.send(ACTION.DATA_REQUEST, WINDOW, $('.tab-item.focus').data('type'));
+    })
+
+
 });
 
-function updateList(){
+function updateBugList(emitter, data){
+    var total = data.total || 0,
+        list = data.bugs || [];
+    if(stage === 'his-bug'){
+        $('.total-bug').html('一共接锅：<span>' + total + '</span> 口，再接再厉~');
+        $('.bug-tip').html('只显示前50条bug喔');
+    } else if (stage === 'bug'){
+        $('.total-bug').html('当前背锅：<span>' + total + '</span> 口 _(:з」∠)_');
+        $('.bug-tip').html('只显示前50条bug喔');
+    } else {
+        $('.total-bug').html('');
+    }
+
     var html = '';
     for(var i = 0; i < list.length; i++){
         html += '<li class="item" data-url="' + list[i].link + '">' +
@@ -57,12 +58,15 @@ function updateList(){
             '</li>';
     }
     $('.main-list').html(html);
+
 }
 
-function updateRank(){
+function loadRank(emitter, data){
+    $('.total-bug').html('锅——资历的象征');
+    $('.bug-tip').html('');
     var html = '';
-    for(var i = 0; i < list.length; i++){
-        html += '<li class="item" data-url="' + list[i].link + '"><a><i class="icon-exclamation-sign mr10 ml10"></i>' + list[i].rank +  ' ----- ' + list[i].name + ' ----- ' + list[i].count + '</a></li>';
+    for(var i = 0; i < data.length; i++){
+        html += '<li class="item"><a><i class="icon-exclamation-sign mr10 ml10"></i>' + '第' + (i + 1) + '名 --->> ' + (data[i].assignee || 'Anonymous') +  ' ----- ' + data[i].bugCount  + '</a></li>';
     }
     $('.main-list').html(html);
 }

@@ -56,6 +56,15 @@ function _getAllBugs(onSuccess, onFail){
     _base(options, onSuccess, onFail);
 }
 
+function _getBugRank(onSuccess, onFail){
+    var options = {
+        url: 'http://10.10.31.222/api/notice',
+        method: 'GET',
+        jar: globalJar
+    };
+    _base(options, onSuccess, onFail);
+}
+
 function _getMessage(onSuccess, onFail){
     var options = {
         url: 'http://10.10.31.222/api/notice',
@@ -65,9 +74,10 @@ function _getMessage(onSuccess, onFail){
     _base(options, onSuccess, onFail);
 }
 
+
+
 // basic logic
 function _base(options, onSuccess, onFail, noParse){
-    console.log(options);
     req(options, function(err, res, body){
         if(!err && res.statusCode === 200 && onSuccess && typeof onSuccess === 'function'){
             console.log(new Date() + ': get data √');
@@ -91,7 +101,8 @@ var Handler = {
     getTask: _getTask,
     getBug: _getBug,
     getAllBugs: _getAllBugs,
-    getMessage: _getMessage
+    getMessage: _getMessage,
+    getBugRank: _getBugRank
 };
 
 module.exports = Handler;

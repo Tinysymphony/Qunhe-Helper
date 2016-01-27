@@ -56,6 +56,7 @@ $(function () {
     ipc.on(SEND.RENDER_MESSAGE_ERROR, renderMessageError);
     ipc.on(SEND.RENDER_BUG, renderBug);
     ipc.on(SEND.RENDER_BUG_ERROR, renderBugError);
+    ipc.on(SEND.UPDATE_MENU_BUG, updateMenuBug);
 });
 
 // get local settings and saved user info.
@@ -112,7 +113,6 @@ function renderMessage(emitter, data, isShow, isLogin) {
     if (!nconf.get('message')) {
         nconf.set('message', 0);
     }
-    console.log(data.count);
     if (isShow && (isLogin || data.count > nconf.get('message'))) {
         notice('留言提醒', '有' + window.g_messageCount + '条信息未读，请尽快查阅', '', '../../img/s.png');
     }
@@ -132,17 +132,7 @@ function renderMessageError() {
 }
 
 function renderBug(emitter, data, isShow, isLogin) {
-    var count  = data;
-    if(!nconf.get('bug')){
-        nconf.set('bug', 0);
-    }
-    console.log(count);
-    if(isShow && (isLogin || count > nconf.get('bug'))){
-        notice('Bug提醒', '有' + count + '个Bug等待处理，请及时修理 or 甩锅', '', '../../img/s.png');
-    }
-    nconf.set('message', count);
-    nconf.save();
-    $('.J-bug').text('我的BUG（' + count + '）');
+    updateMenuBug(data, isShow);
     setTimeout(function(){
         ipc.send(ACTION.POLLING_BUG);
     }, POLLING_TIME);
@@ -152,4 +142,18 @@ function renderBugError() {
     setTimeout(function(){
         ipc.send(ACTION.POLLING_BUG);
     }, POLLING_TIME);
+}
+
+function updateMenuBug(num, isShow){
+    $('.J-bug').text('我的BUG（' + num + '）');
+
+    if(!nconf.get('bug')){
+        nconf.set('bug', 0);
+    }
+
+    if(isShow && (num > nconf.get('bug'))){
+        notice('Bug提醒', '有' + num + '个Bug等待处理，请及时修理 or 甩锅', '', '../../img/s.png');
+    }
+    nconf.set('bug', num);
+    nconf.save();
 }

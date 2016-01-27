@@ -5,16 +5,19 @@ const SEND = require('../const.js').SEND;
 const STATUS = require('../const.js').STATUS;
 
 var _username = '',
-    _basicBugLink = "http://jira.qunhequnhe.com/browse/";
+    _basicBugLink = "http://jira.qunhequnhe.com/browse/",
+    _mainWindow = null,
+    _isNotify = true;
 
 function _login(username, password, window) {
     httpHandler.login(username, password, function () {
         _username = username;
+        //_mainWindow = window;
         window.send(SEND.LOGIN_SUCCESS);
 
         // Send unread messages and trigger polling
         httpHandler.getMessage(function (data) {
-            window.send(SEND.RENDER_MESSAGE, data, true, true);
+            window.send(SEND.RENDER_MESSAGE, data, _isNotify, true);
         }, function () {
             window.send(SEND.RENDER_MESSAGE_ERROR);
         });
@@ -22,7 +25,7 @@ function _login(username, password, window) {
         // Send unsolved bugs and trigger polling
         var queryStatus = '(status = ' + STATUS.OPEN_BUG + ' OR status = '+ STATUS.REOPENED_BUG + ')';
         httpHandler.getBug(username, queryStatus, function(data){
-            window.send(SEND.RENDER_BUG, data.total, true, true);
+            window.send(SEND.RENDER_BUG, data.total, _isNotify, true);
         }, function(){
             window.send(SEND.RENDER_BUG_ERROR);
         });
@@ -57,36 +60,38 @@ function _getTask(window) {
 function _getMessage(window, mainWindow) {
     httpHandler.getMessage(function (data) {
         window.send(SEND.LOAD_MESSAGE, data);
-        mainWindow.send(SEND.RENDER_MESSAGE, data, true);
+        //mainWindow.send(SEND.RENDER_MESSAGE, data, true);
     }, function () {
         window.send(SEND.LOAD_FAILED);
-        mainWindow.send(SEND.RENDER_MESSAGE_ERROR);
+        //mainWindow.send(SEND.RENDER_MESSAGE_ERROR);
     });
 }
 
 function _pollingMessage(window) {
     httpHandler.getMessage(function (data) {
-        window.send(SEND.RENDER_MESSAGE, data, true, false);
+        window.send(SEND.RENDER_MESSAGE, data, _isNotify, false);
     }, function () {
         window.send(SEND.RENDER_MESSAGE_ERROR);
     });
 }
 
-function _getBug(window) {
+function _getBug(window, type) {
     // concatenate query condition (bug status)
+
     var query = '(';
-    for (var i = 0; i < arguments.length - 1; i++) {
+    for (var i = 2; i < arguments.length - 1; i++) {
         if (i != arguments.length - 2) {
-            query += 'status = ' + arguments[i + 1] + ' OR ';
+            query += 'status = ' + arguments[i] + ' OR ';
         } else {
-            query += 'status = ' + arguments[i + 1] + ')';
+            query += 'status = ' + arguments[i] + ')';
         }
     }
-    console.log(query);
     httpHandler.getBug(_username, query, function (data) {
-        console.log(data);
         data = _simplifyBug(data);
         window.send(SEND.LOAD_BUG, data);
+        if(type === 'bug'){
+            _mainWindow.send(SEND.UPDATE_MENU_BUG, data.total, _isNotify);
+        }
     }, function () {
         window.send(SEND.LOAD_FAILED);
     });
@@ -111,21 +116,8 @@ function _pollingBug(window){
 
 // get bugs of everyone and rank them.
 function _rankBug(target) {
-    httpHandler.getAllBugs(function (data) {
-        var rank = {};
-        console.log(data.totoal);
-        for (var i = 0; i < data.total; i++) {
-            // console.log(data.issues[i]);
-            if (!data.issues[i].assignee) {
-                continue;
-            }
-            if (rank[data.issues[i].assignee]) {
-                rank[data.issues[i].assignee] += 1;
-            } else {
-                rank[data.issues[i].assignee] = 1;
-            }
-        }
-        window.send(SEND.LOAD_RANK, rank);
+    httpHandler.getBugRank(function (data) {
+        window.send(SEND.LOAD_RANK, data);
     }, function () {
         window.send(SEND.LOAD_FAILED);
     });
@@ -151,7 +143,7 @@ function _simplifyBug(data) {
     var result = {};
     result.bugs = [];
     result.total = data.total;
-    for (var i = 0; i < data.total; i++) {
+    for (var i = 0; i < data.issues.length; i++) {
         var tmp = {
             "key": data.issues[i]["key"],
             "title": data.issues[i]["fields"]["summary"],

@@ -10,7 +10,6 @@ const ipc = electron.ipcMain;
 // Module to control application life.
 const app = electron.app;
 
-console.log(app.getPath('userData'));
 // Module to create native browser window.
 const BrowserWindow = electron.BrowserWindow;
 
@@ -32,8 +31,8 @@ const CONST = require('./js/const.js'),
     SEND = CONST.SEND;
 
 var TEST_MODE = false,
-    DATA = null;
-
+    DATA = null,
+    isNotify = true;
 // Using test mode
 
 if (process.argv[2] === MODE.TEST_MODE) {
@@ -72,7 +71,7 @@ function createWindow() {
     // and load the index.html of the app.
     mainWindow.loadURL('file://' + __dirname + '/index.html');
     // Open the DevTools.
-    //mainWindow.webContents.openDevTools();
+    mainWindow.webContents.openDevTools();
 
     // Emitted when the window is closed.
     mainWindow.on('closed', function () {
@@ -146,9 +145,9 @@ ipc.on(ACTION.DATA_REQUEST, function (emitter, name, type) {
                 if (type === TYPE.HISTROY_BUG) {
                     newWindows[name].send(SEND.LOAD_BUG, DATA.HistoryBug);
                 } else if (type === TYPE.RANK_BUG) {
-                    newWindows[name].send(SEND.LOAD_BUG, DATA.RankBug);
+                    newWindows[name].send(SEND.LOAD_RANK, DATA.RankBug);
                 } else {
-                    newWindows[name].send(SEND.LOAD_BUG, DATA.Bug);
+                    newWindows[name].send(SEND.LOAD_BUG, DATA.Bug, isNotify);
                 }
                 break;
             case WINDOW.MESSAGE:
@@ -174,11 +173,11 @@ ipc.on(ACTION.DATA_REQUEST, function (emitter, name, type) {
             break;
         case WINDOW.BUG:
             if (type === TYPE.HISTROY_BUG) {
-                dataHandler.getBug(newWindows[name], STATUS.CLOSED_BUG, STATUS.RESOLVED_BUG);
+                dataHandler.getBug(newWindows[name], type, STATUS.CLOSED_BUG, STATUS.RESOLVED_BUG);
             } else if (type === TYPE.RANK_BUG) {
                 dataHandler.rankBug(newWindows[name]);
             } else {
-                dataHandler.getBug(newWindows[name], STATUS.OPEN_BUG, STATUS.REOPENED_BUG);
+                dataHandler.getBug(newWindows[name], type, STATUS.OPEN_BUG, STATUS.REOPENED_BUG);
             }
             break;
         case WINDOW.MESSAGE:
@@ -200,8 +199,8 @@ ipc.on(ACTION.LOGIN, function (emitter, username, password) {
     // Send Login Success message with the path to save user configurations.
     if (TEST_MODE) {
         mainWindow.send(SEND.LOGIN_SUCCESS);
-        mainWindow.send(SEND.RENDER_MESSAGE, DATA.RenderMessage, true, true);
-        mainWindow.send(SEND.RENDER_BUG, DATA.Bug, true, true);
+        mainWindow.send(SEND.RENDER_MESSAGE, DATA.RenderMessage, isNotify, true);
+        mainWindow.send(SEND.RENDER_BUG, DATA.Bug.total, isNotify, true);
         return;
     }
     dataHandler.login(username, password, mainWindow);
@@ -209,14 +208,14 @@ ipc.on(ACTION.LOGIN, function (emitter, username, password) {
 
 ipc.on(ACTION.POLLING_MSG, function () {
     if(TEST_MODE) {
-        mainWindow.send(SEND.RENDER_MESSAGE, DATA.RenderMessage, true, false);
+        mainWindow.send(SEND.RENDER_MESSAGE, DATA.RenderMessage, isNotify, false);
     }
     dataHandler.pollingMessage(mainWindow);
 });
 
 ipc.on(ACTION.POLLING_BUG, function(){
     if(TEST_MODE) {
-        mainWindow.send(SEND.RENDER_BUG, DATA.Bug, true, false);
+        mainWindow.send(SEND.RENDER_BUG, DATA.Bug.total, isNotify, false);
     }
-    dataHandler.getBug(mainWindow, STATUS.OPEN, STATUS.REOPENED_BUG);
+    dataHandler.getBug(mainWindow, TYPE.BUG, STATUS.OPEN, STATUS.REOPENED_BUG);
 });

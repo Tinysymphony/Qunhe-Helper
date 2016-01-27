@@ -27,7 +27,7 @@ html {
 }
 
 .main-list {
-    margin-top: 120px;
+    margin-top: 30px;
 }
 
 .item {
@@ -91,3 +91,27 @@ p.item-content {
     margin-bottom: 40px;
 }
 
+.total-bug {
+    width: 80%;
+    margin-left: 10%;
+    margin-top: 120px;
+    font-size: 16px;
+    text-align: center;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #d0d0d0;
+}
+
+.total-bug span {
+    font-size: 22px;
+    color: #2BB8AA;
+}
+
+.bug-tip {
+    width: 80%;
+    margin-left: 10%;
+    text-align: center;
+    font-size: 14px;
+    color: #aaa;
+    padding-top: 15px;
+    border-top: 1px solid #d0d0d0;
+}

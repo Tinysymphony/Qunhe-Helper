@@ -35,7 +35,8 @@ var CONST = {
     // Detailed Data Type
     TYPE: {
         HISTROY_BUG: 'his-bug',
-        RANK_BUG: 'rank-bug'
+        RANK_BUG: 'rank-bug',
+        BUG: 'bug'
     },
     // Send message to front-end
     SEND: {
@@ -52,7 +53,8 @@ var CONST = {
         LOAD_RANK: 'load-rank',
         LOAD_MESSAGE: 'load-message',
         LOAD_SETTINGS: 'load-settings',
-        LOAD_FAILED: 'load-fail'
+        LOAD_FAILED: 'load-fail',
+        UPDATE_MENU_BUG: 'update-menu-bug'
     },
     // Urls
 };

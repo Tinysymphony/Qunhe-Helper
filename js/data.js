@@ -17,6 +17,7 @@ var Data = {
         }
     ],
     Bug: {
+        total: 3,
         bugs: [
             {
                 link: 'http://wytiny.com',
@@ -40,6 +41,7 @@ var Data = {
         ]
     },
     HistoryBug: {
+        total: 4,
         bugs: [
             {
                 link: 'http://wytiny.com',
@@ -71,34 +73,28 @@ var Data = {
             }
         ]
     },
-    RankBug: {
-        ranks: [
-            {
-                link: 'http://wytiny.com',
-                rank: 0,
-                name: 'Afei',
-                count: 1234
-            },
-            {
-                link: 'http://wytiny.com',
-                rank: 1,
-                name: 'Yeye',
-                count: 134
-            },
-            {
-                link: 'http://wytiny.com',
-                rank: 2,
-                name: 'Dabai',
-                count: 114
-            },
-            {
-                link: 'http://wytiny.com',
-                rank: 3,
-                name: 'Wytiny',
-                count: 27
-            }
-        ]
-    },
+    RankBug: [
+        {
+            assignee: 'tiny',
+            bugCount: 100
+        },
+        {
+            assignee: 'wytiny',
+            bugCount: 90
+        },
+        {
+            assignee: 'Tomb',
+            bugCount: 70
+        },
+        {
+            assignee: 'Merish',
+            bugCount: 50
+        },
+        {
+            assignee: 'arisniy',
+            bugCount: 10
+        }
+    ],
     Message: {
         count: 3,
         messages: [
