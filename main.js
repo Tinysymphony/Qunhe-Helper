@@ -35,6 +35,9 @@ var TEST_MODE = false,
     isNotify = true;
 // Using test mode
 
+var currentBugList = [STATUS.OPEN_BUG, STATUS.REOPENED_BUG],
+    historyBugList = [STATUS.CLOSED_BUG, STATUS.RESOLVED_BUG];
+
 if (process.argv[2] === MODE.TEST_MODE) {
     DATA = require('./js/data.js');
     TEST_MODE = true;
@@ -173,11 +176,11 @@ ipc.on(ACTION.DATA_REQUEST, function (emitter, name, type) {
             break;
         case WINDOW.BUG:
             if (type === TYPE.HISTROY_BUG) {
-                dataHandler.getBug(newWindows[name], type, STATUS.CLOSED_BUG, STATUS.RESOLVED_BUG);
+                dataHandler.getBug(newWindows[name], mainWindow, type, historyBugList);
             } else if (type === TYPE.RANK_BUG) {
                 dataHandler.rankBug(newWindows[name]);
             } else {
-                dataHandler.getBug(newWindows[name], type, STATUS.OPEN_BUG, STATUS.REOPENED_BUG);
+                dataHandler.getBug(newWindows[name], mainWindow, type, currentBugList);
             }
             break;
         case WINDOW.MESSAGE:
@@ -207,6 +210,7 @@ ipc.on(ACTION.LOGIN, function (emitter, username, password) {
 });
 
 ipc.on(ACTION.POLLING_MSG, function () {
+    console.log('polling msg');
     if(TEST_MODE) {
         mainWindow.send(SEND.RENDER_MESSAGE, DATA.RenderMessage, isNotify, false);
         return;
@@ -215,9 +219,10 @@ ipc.on(ACTION.POLLING_MSG, function () {
 });
 
 ipc.on(ACTION.POLLING_BUG, function(){
+    console.log('polling bug');
     if(TEST_MODE) {
         mainWindow.send(SEND.RENDER_BUG, DATA.Bug.total, isNotify, false);
         return;
     }
-    dataHandler.getBug(mainWindow, TYPE.BUG, STATUS.OPEN, STATUS.REOPENED_BUG);
+    dataHandler.pollingBug(mainWindow, currentBugList);
 });

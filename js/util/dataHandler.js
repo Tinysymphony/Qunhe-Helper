@@ -75,35 +75,35 @@ function _pollingMessage(window) {
     });
 }
 
-function _getBug(window, type) {
+function _getBug(window, mainWindow, type, statusList) {
     // concatenate query condition (bug status)
 
     var query = '(';
-    for (var i = 2; i < arguments.length - 1; i++) {
-        if (i != arguments.length - 2) {
-            query += 'status = ' + arguments[i] + ' OR ';
+    for (var i = 0; i < statusList.length; i++) {
+        if (i != statusList.length - 1) {
+            query += 'status = ' + statusList[i] + ' OR ';
         } else {
-            query += 'status = ' + arguments[i] + ')';
+            query += 'status = ' + statusList[i] + ')';
         }
     }
     httpHandler.getBug(_username, query, function (data) {
         data = _simplifyBug(data);
         window.send(SEND.LOAD_BUG, data);
         if(type === 'bug'){
-            _mainWindow.send(SEND.UPDATE_MENU_BUG, data.total, _isNotify);
+            mainWindow.send(SEND.UPDATE_MENU_BUG, data.total, _isNotify);
         }
     }, function () {
         window.send(SEND.LOAD_FAILED);
     });
 }
 
-function _pollingBug(window){
+function _pollingBug(window, statusList){
     var query = '(';
-    for (var i = 0; i < arguments.length - 1; i++) {
-        if (i != arguments.length - 2) {
-            query += 'status = ' + arguments[i + 1] + ' OR ';
+    for (var i = 0; i < statusList.length; i++) {
+        if (i != statusList.length - 1) {
+            query += 'status = ' + statusList[i] + ' OR ';
         } else {
-            query += 'status = ' + arguments[i + 1] + ')';
+            query += 'status = ' + statusList[i] + ')';
         }
     }
     httpHandler.getBug(_username, query, function (data) {
@@ -115,7 +115,7 @@ function _pollingBug(window){
 }
 
 // get bugs of everyone and rank them.
-function _rankBug(target) {
+function _rankBug(window) {
     httpHandler.getBugRank(function (data) {
         window.send(SEND.LOAD_RANK, data);
     }, function () {

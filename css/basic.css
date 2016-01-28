@@ -68,6 +68,8 @@ img {vertical-align: middle;}
 .fs18 {font-size: 18px;}
 .fs20 {font-size: 20px;}
 
+.fix {position: fixed}
+
 .none {
     display: none;
     width: 0;
