@@ -145,7 +145,15 @@ function renderBugError() {
 }
 
 function updateMenuBug(num, isShow){
-    $('.J-bug').text('我的BUG（' + num + '）');
+    if(typeof num != 'number'){
+        return;
+    }
+
+    if(num === 0){
+        $('.J-bug').text('我的BUG');
+    } else {
+        $('.J-bug').text('我的BUG（' + num + '）');
+    }
 
     if(!nconf.get('bug')){
         nconf.set('bug', 0);

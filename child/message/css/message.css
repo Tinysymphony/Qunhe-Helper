@@ -52,3 +52,30 @@ p.item-content {
 .J-refresh {
     margin-top: 14px;
 }
+
+.footer {
+    width: 100%;
+    border-top: 1px solid #ddd;
+    position: fixed;
+    bottom: 0;
+    padding: 5px 5% 10px 5%;
+}
+
+.footer input {
+    box-sizing: border-box;
+    display: inline-block;
+    border: 0;
+    height: 20px;
+    width: 120px;
+    border-bottom: 1px solid #007D9E;
+    margin-top: 15px;
+    font-size: 16px;
+    text-align: center;
+    outline: none;
+}
+
+.footer textarea {
+    box-sizing: border-box;
+    border: 2px solid #2BB8AA;
+    outline: none;
+}

@@ -1,5 +1,6 @@
 .body {
     /*width: 100%;*/
+    margin-top: 100px;
     height: 100%;
     box-sizing: border-box;
     color: #555;
@@ -12,4 +13,20 @@ html.about {
 .content {
     margin-top: 60px;
     text-align: center;
+}
+
+.github-link {
+    font-size: 16px;
+    margin-top: 20px;
+}
+
+.github-link a, .net-link a {
+    margin-left: 15px;
+    color: #2BB8AA;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.net-link {
+    margin-bottom: 30px;
 }

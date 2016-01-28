@@ -75,6 +75,10 @@ function _pollingMessage(window) {
     });
 }
 
+function _sendMessage() {
+
+}
+
 function _getBug(window, mainWindow, type, statusList) {
     // concatenate query condition (bug status)
 
@@ -108,7 +112,7 @@ function _pollingBug(window, statusList){
     }
     httpHandler.getBug(_username, query, function (data) {
         data = _simplifyBug(data);
-        window.send(SEND.RENDER_BUG, data);
+        window.send(SEND.RENDER_BUG, data.total);
     }, function () {
         window.send(SEND.RENDER_BUG_ERROR);
     });

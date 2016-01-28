@@ -18,12 +18,17 @@ $(function(){
 });
 
 function noticeMessage(){
-    if(messageCount != 0){
+    if(messageCount != 0) {
         notice('留言提醒', '有' + messageCount + '条信息未读，请尽快查阅', '', '../../img/s.png');
     }
 }
 
 function renderMessage(){
+    var $list = $('.main-list');
+    if(message.length === 0) {
+        $list.before('<p class="no-msg">没有新的消息，sigh...</p>');
+        return;
+    }
     var html = '';
     for(var i = 0; i < message.length; i++){
         html += '<li><div class="item center" data-id="' + message[i].recipientId + '">' +
@@ -33,5 +38,5 @@ function renderMessage(){
         '<a class="item-time">' + message[i].formatCreated + '</a>' +
         '</p></div></li>';
     }
-    $('.main-list').append(html);
+    $list.append(html);
 }
