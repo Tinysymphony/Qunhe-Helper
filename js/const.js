@@ -14,7 +14,8 @@ var CONST = {
         RENDER_DOT: 'render-dot',
         POLLING_MSG: 'polling-msg',
         POLLING_BUG: 'polling-bug',
-        RESTART: 'restart'
+        RESTART: 'restart',
+        CLEAR_MSG: 'clear-msg'
     },
     // New windows
     WINDOW: {
@@ -59,8 +60,9 @@ var CONST = {
         LOAD_FAILED: 'load-fail',
         UPDATE_MENU_BUG: 'update-menu-bug',
         GET_USERS: 'get-users',
-        GET_USERS_ERROR: 'get-users-error'
-    },
+        GET_USERS_ERROR: 'get-users-error',
+        CLEAR_MSG: 'clear-message'
+    }
     // Urls
 };
 

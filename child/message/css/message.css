@@ -171,3 +171,14 @@ p.item-content {
     border: 1px solid #2BB8AA;
     color: #2BB8AA;
 }
+
+.modal {
+    /*display: none;*/
+    position: fixed;
+    font-size: 14px;
+    color: #FFF;
+    border-radius: 5px;
+    padding: 0 10px;
+    right: 10px;
+    background: rgba(28, 30, 32, 0.4);
+}

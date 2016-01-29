@@ -58,3 +58,12 @@ html {
     color: #2BB8AA;
 }
 
+.change-user {
+    color: #fff;
+    /*background-color: #2BB8AA;*/
+    background-color: #ccc;
+    padding: 5px 15px;
+    /*cursor: pointer;*/
+    cursor: auto;
+}
+

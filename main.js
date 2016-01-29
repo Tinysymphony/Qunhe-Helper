@@ -70,6 +70,7 @@ function createWindow() {
         transparent: true,
         autoHideMenuBar: true,
         frame: false,
+        resizable: false
     });
     // and load the index.html of the app.
     mainWindow.loadURL('file://' + __dirname + '/index.html');
@@ -114,6 +115,7 @@ app.on('activate', function () {
 ipc.on(ACTION.READY, function (emitter, window) {
     if(window){
         newWindows[window].send(SEND.DATA_PATH, dataPath);
+        return;
     }
     mainWindow.send(SEND.DATA_PATH, dataPath);
 });
@@ -135,7 +137,7 @@ ipc.on(ACTION.RESTART, function(){
 
 // when items on the main menu is clicked, open a new window and save the reference.
 ipc.on(ACTION.NEW_WINDOW, function (emitter, name, url, options) {
-    // options.resizable = false;
+    options.resizable = false;
     options.overlayScrollbars = true;
     if (name === WINDOW.TOP) {
         //link browser
@@ -238,4 +240,8 @@ ipc.on(ACTION.POLLING_BUG, function(){
         return;
     }
     dataHandler.pollingBug(mainWindow, currentBugList);
+});
+
+ipc.on(ACTION.CLEAR_MSG, function(){
+    mainWindow.send(SEND.CLEAR_MSG);
 });

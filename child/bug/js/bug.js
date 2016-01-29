@@ -14,7 +14,7 @@ $(function(){
 
     ipc.send(ACTION.DATA_REQUEST, WINDOW);
     ipc.on(SEND.LOAD_BUG, updateBugList);
-    ipc.on(SEND.LOAD_RANK, loadRank);
+    //ipc.on(SEND.LOAD_RANK, loadRank);
 
     $('.main-list').on('click', '.item', function(){
         var url = $(this).data('url');
@@ -26,6 +26,16 @@ $(function(){
         stage = $(this).data('type');
         $this.addClass('focus').siblings().removeClass('focus');
         ipc.send(ACTION.DATA_REQUEST, WINDOW, $this.data('type'));
+        if($this.data('type') === 'rank-bug'){
+            $.ajax({
+                url: 'http://10.10.31.222/api/issue',
+                method: 'GET',
+                success: function(data){
+                    var list = JSON.parse(data);
+                    loadRank(list);
+                }
+            });
+        }
     }).on('click', '.J-refresh', function(){
         ipc.send(ACTION.DATA_REQUEST, WINDOW, $('.focus').data('type'));
     });
@@ -33,6 +43,7 @@ $(function(){
     ipc.on(SEND.CLOSE, function(){
         window.close();
     });
+
 
 });
 
@@ -63,7 +74,7 @@ function updateBugList(emitter, data){
 
 }
 
-function loadRank(emitter, data){
+function loadRank(data){
     $('.total-bug').html('锅——资历的象征');
     $('.bug-tip').html('');
     var html = '';
@@ -71,4 +82,13 @@ function loadRank(emitter, data){
         html += '<li class="item"><a><i class="icon-exclamation-sign mr10 ml10"></i>' + '第' + (i + 1) + '名 --->> ' + (data[i].assignee || 'Anonymous') +  ' ----- ' + data[i].bugCount  + '</a></li>';
     }
     $('.main-list').html(html);
+}
+
+function staticRank(){
+    var string = '<div class="static-list-wp"><ul><li class="rank-item">1. fuchen --- 7</li>' +
+        '<li class="rank-item">2. changchuan --- 5</li>' +
+        '<li class="rank-item">3. buou --- 3</li>' +
+        '<li class="rank-item">4. xiabing --- 3</li>' +
+        '<li class="rank-item">5. alen --- 2</li></ul></div>';
+    $('.bug-content').html(string);
 }

@@ -59,6 +59,7 @@ $(function () {
     ipc.on(SEND.UPDATE_MENU_BUG, updateMenuBug);
     ipc.on(SEND.GET_USERS, getUsers);
     ipc.on(SEND.RELOAD, reloadApp);
+    ipc.on(SEND.CLEAR_MSG, clearMsg);
 });
 
 // get local settings and saved user info.
@@ -78,6 +79,16 @@ function loginSuccess() {
     };
     nconf.set('user', user);
     nconf.save();
+
+    $.ajax({
+        url: 'http://10.10.31.222/api/userid?jira=' + user.username,
+        method: 'GET',
+        success: function(data){
+            nconf.set('id', data);
+            nconf.save();
+        },
+        error: function(){}
+    });
 
     $('.login-success').css({display: 'block'});
     $('.tiny').css({
@@ -112,97 +123,116 @@ function uploadInfo(emitter, data) {
 
 // abort it
 function renderMessage(emitter, data, isShow, isLogin) {
-    window.g_messageCount = data.count;
+    var count = data.count;
     if (!nconf.get('message')) {
         nconf.set('message', 0);
     }
-    if (isShow && (isLogin || data.count > nconf.get('message'))) {
-        notice('私信提醒', '有' + window.g_messageCount + '条信息未读，请尽快查阅', '', '../../img/s.png');
-    }
-    nconf.set('message', data.count);
-    nconf.save();
-    $('.red-point').text(window.g_messageCount > 999 ? '...' : window.g_messageCount).css({display: 'block'});
-    $('.J-message').text('私信（' + window.g_messageCount + '）');
-    setTimeout(function () {
-        ipc.send(ACTION.POLLING_MSG);
-    }, POLLING_TIME);
-}
 
-function renderMenuMsg(num, isShow){
-    if(!nconf.get('message')){
-        nconf.set('message', 0);
+    var num = count - nconf.get('message');
+
+    if(num <= 0){
+        return;
     }
-    if(isShow && num > nconf.get('message')){
+
+    if (isShow && isLogin) {
         notice('私信提醒', '有' + num + '条信息未读，请尽快查阅', '', '../../img/s.png');
     }
-    nconf.set('message', num);
+    nconf.set('message', count);
+
     nconf.save();
+    $('.red-point').text(num > 999 ? '...' : num).css({display: 'block'});
+    $('.J-message').text('私信（' + num + '）');
+    //setTimeout(function () {
+    //    ipc.send(ACTION.POLLING_MSG);
+    //}, POLLING_TIME);
+}
+
+function renderMenuMsg(data, isShow) {
+    if (!nconf.get('message')) {
+        nconf.set('message', 0);
+    }
+    var num = data - nconf.get('message');
+
+    if(num <= 0){
+        return;
+    }
+
+    if (isShow) {
+        notice('私信提醒', '有' + num + '条信息未读，请尽快查阅', '', '../../img/s.png');
+    }
+    nconf.set('message', data);
+    //nconf.save();
     $('.red-point').text(num > 999 ? '...' : num).css({display: 'block'});
     $('.J-message').text('私信（' + num + '）');
 }
 
 function renderMessageError() {
-    setTimeout(function(){
+    setTimeout(function () {
         ipc.send(ACTION.POLLING_MSG);
     }, POLLING_TIME);
 }
 
 function renderBug(emitter, data, isShow, isLogin) {
     updateMenuBug(data, isShow, isLogin);
-    setTimeout(function(){
+    setTimeout(function () {
         ipc.send(ACTION.POLLING_BUG);
     }, POLLING_TIME);
 }
 
 function renderBugError() {
-    setTimeout(function(){
+    setTimeout(function () {
         ipc.send(ACTION.POLLING_BUG);
     }, POLLING_TIME);
 }
 
-
 //guozi
-function getUsers(emitter, data){
+function getUsers(emitter, data) {
     nconf.set('users', data);
     nconf.save();
     console.log(new Date() + ': Get users √');
     var id = nconf.get('id'),
         tag = 'msg polling';
-    (function poll(){
-        setTimeout(function(){
-            $.ajax({
-                url: 'http://10.10.31.222/api/readmessage?recipientid=' + (id || 38),
-                method: 'GET',
-                success: function(data){
-                    console.log(new Date() + ': ' + tag + ' √' );
-                    var num = JSON.parse(data).length;
-                    renderMenuMsg(num, true);
+
+    function poll(){
+        $.ajax({
+            url: 'http://10.10.31.222/api/readmessage?recipientid=' + id,
+            method: 'GET',
+            success: function (data) {
+                console.log(new Date() + ': ' + tag + ' √');
+                var num = JSON.parse(data).length;
+                renderMenuMsg(num, true);
+                //poll();
+            },
+            error: function () {
+                console.log(new Date() + ': ' + tag + ' X');
+                //poll();
+            },
+            complete: function() {
+                setTimeout(function(){
                     poll();
-                },
-                error: function(){
-                    console.log(new Date() + ': ' + tag + ' X' );
-                }
-            });
-        }, 20000);
-    })();
+                }, 20000);
+            }
+        });
+    }
+    poll();
 }
 
-function updateMenuBug(num, isShow, isLogin){
-    if(typeof num != 'number'){
+function updateMenuBug(num, isShow, isLogin) {
+    if (typeof num != 'number') {
         return;
     }
 
-    if(num === 0){
+    if (num === 0) {
         $('.J-bug').text('我的BUG');
     } else {
         $('.J-bug').text('我的BUG（' + num + '）');
     }
 
-    if(!nconf.get('bug')){
+    if (!nconf.get('bug')) {
         nconf.set('bug', 0);
     }
 
-    if(isShow && (isLogin || num > nconf.get('bug'))){
+    if (isShow && (isLogin || num > nconf.get('bug'))) {
         console.log('here');
         notice('Bug提醒', '有' + num + '个Bug等待处理，请及时修理 or 甩锅', '', '../../img/s.png');
     }
@@ -210,6 +240,11 @@ function updateMenuBug(num, isShow, isLogin){
     nconf.save();
 }
 
-function reloadApp(){
+function reloadApp() {
     window.location.reload();
+}
+
+function clearMsg(){
+    $('.red-point').text('').css({display: 'none'});
+    $('.J-message').text('私信');
 }
