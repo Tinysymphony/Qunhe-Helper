@@ -30,6 +30,10 @@ $(function(){
         ipc.send(ACTION.DATA_REQUEST, WINDOW, $('.focus').data('type'));
     });
 
+    ipc.on(SEND.CLOSE, function(){
+        window.close();
+    });
+
 });
 
 function updateBugList(emitter, data){

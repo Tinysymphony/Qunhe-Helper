@@ -30,7 +30,7 @@ function binder(){
         $menu.toggleClass('dummy--active');
     })
     .on('click', '.J-about', function(){
-        startWindow('about', 300, 380);
+        startWindow('about', 300, 500);
         $menu.toggleClass('dummy--active');
     })
     .on('click', '.J-settings', function(){

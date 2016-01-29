@@ -74,7 +74,7 @@ function createWindow() {
     // and load the index.html of the app.
     mainWindow.loadURL('file://' + __dirname + '/index.html');
     // Open the DevTools.
-    mainWindow.webContents.openDevTools();
+    //mainWindow.webContents.openDevTools();
 
     // Emitted when the window is closed.
     mainWindow.on('closed', function () {
@@ -111,13 +111,26 @@ app.on('activate', function () {
 });
 
 // when the main window is rendered, send the data path.
-ipc.on(ACTION.READY, function () {
+ipc.on(ACTION.READY, function (emitter, window) {
+    if(window){
+        newWindows[window].send(SEND.DATA_PATH, dataPath);
+    }
     mainWindow.send(SEND.DATA_PATH, dataPath);
 });
 
 // when the close button of the login window is pressed, close the application.
 ipc.on(ACTION.CLOSE_APP, function () {
     app.quit();
+});
+
+ipc.on(ACTION.RESTART, function(){
+    console.log('Restarting...');
+    for(var win in newWindows){
+        if(newWindows[win] && newWindows.hasOwnProperty(win) && typeof newWindows[win] === 'object'){
+            newWindows[win].send(SEND.CLOSE);
+        }
+    }
+    mainWindow.send(SEND.RELOAD);
 });
 
 // when items on the main menu is clicked, open a new window and save the reference.

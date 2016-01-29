@@ -20,13 +20,13 @@ html.about {
     margin-top: 20px;
 }
 
-.github-link a, .net-link a {
+.github-link a, .net-link a, .tiny-link a {
     margin-left: 15px;
     color: #2BB8AA;
     font-size: 16px;
     cursor: pointer;
 }
 
-.net-link {
+.tiny-link {
     margin-bottom: 30px;
 }

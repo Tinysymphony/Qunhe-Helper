@@ -18,6 +18,10 @@ $(function(){
         var url = 'http://jira.qunhequnhe.com/projects/' + $(this).data('key').toUpperCase() + '/summary';
         shell.openExternal(url);
     });
+
+    ipc.on(SEND.CLOSE, function(){
+        window.close();
+    });
 });
 
 function updateList(){

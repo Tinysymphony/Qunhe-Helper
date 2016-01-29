@@ -16,11 +16,6 @@ function _login(username, password, window) {
         window.send(SEND.LOGIN_SUCCESS);
 
         // Send unread messages and trigger polling
-        httpHandler.getMessage(function (data) {
-            window.send(SEND.RENDER_MESSAGE, data, _isNotify, true);
-        }, function () {
-            window.send(SEND.RENDER_MESSAGE_ERROR);
-        });
 
         // Send unsolved bugs and trigger polling
         var queryStatus = '(status = ' + STATUS.OPEN_BUG + ' OR status = '+ STATUS.REOPENED_BUG + ')';
@@ -29,11 +24,17 @@ function _login(username, password, window) {
         }, function(){
             window.send(SEND.RENDER_BUG_ERROR);
         });
-        //httpHandler.getBug(username, STATUS.OPEN_BUG, function () {
-        //    window.send(SEND.RENDER_BUG, data, true, true);
-        //}, function () {
-        //    window.send(SEND.RENDER_BUG_ERROR);
-        //});
+
+        httpHandler.getUsers(function(data){
+            window.send(SEND.GET_USERS, data);
+            //httpHandler.getMessage(38, function (data) {
+            //    window.send(SEND.RENDER_MESSAGE, data, _isNotify, true);
+            //}, function () {
+            //    window.send(SEND.RENDER_MESSAGE_ERROR);
+            //});
+        }, function(){
+            window.send(SEND.GET_USERS_ERROR);
+        });
 
     }, function () {
         window.send(SEND.LOGIN_FAILED);

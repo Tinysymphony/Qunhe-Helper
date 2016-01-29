@@ -13,7 +13,8 @@ var CONST = {
         LOGIN_TEST: 'test',
         RENDER_DOT: 'render-dot',
         POLLING_MSG: 'polling-msg',
-        POLLING_BUG: 'polling-bug'
+        POLLING_BUG: 'polling-bug',
+        RESTART: 'restart'
     },
     // New windows
     WINDOW: {
@@ -40,6 +41,8 @@ var CONST = {
     },
     // Send message to front-end
     SEND: {
+        CLOSE: 'close',
+        RELOAD: 'reload',
         DATA_PATH: 'data-path',
         LOGIN_SUCCESS: 'login-success',
         LOGIN_FAILED: 'login-error',
@@ -54,7 +57,9 @@ var CONST = {
         LOAD_MESSAGE: 'load-message',
         LOAD_SETTINGS: 'load-settings',
         LOAD_FAILED: 'load-fail',
-        UPDATE_MENU_BUG: 'update-menu-bug'
+        UPDATE_MENU_BUG: 'update-menu-bug',
+        GET_USERS: 'get-users',
+        GET_USERS_ERROR: 'get-users-error'
     },
     // Urls
 };

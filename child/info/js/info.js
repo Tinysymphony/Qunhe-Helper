@@ -1,6 +1,7 @@
 var $ = require('jquery');
 const ipc = require('electron').ipcRenderer;
-
+const ACTION = require('../../js/const').ACTION;
+const SEND = require('../../js/const.js').SEND;
 var info = null;
 
 $(function(){
@@ -8,6 +9,9 @@ $(function(){
     ipc.on('load-info', function(emitter, data){
         info = data;
         updateInfo();
+    });
+    ipc.on(SEND.CLOSE, function(){
+        window.close();
     });
 });
 

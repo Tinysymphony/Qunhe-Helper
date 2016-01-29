@@ -2,7 +2,7 @@
 <html>
     <head>
         <meta charset="utf-8">
-        <title>留言板</title>
+        <title>私信</title>
         <link rel="stylesheet" href="../../css/basic.css" media="screen" title="no title" charset="utf-8">
         <link rel="stylesheet" href="../../css/font-awesome.min.css" media="screen" title="no title" charset="utf-8">
         <!-- <link rel="stylesheet" href="../../css/child.css" media="screen" title="no title" charset="utf-8"> -->
@@ -12,15 +12,30 @@
         <div class="body center">
             <header class="header box-shadow1">
                 <h2><i class="icon-envelope mr10"></i>私信<i class="icon-refresh fr ptr J-refresh"></i></h2>
+                <ul>
+                    <li class="fl tab-item li-get-msg" data-type=""><a href="javascript:;">收件箱</a></li>
+                    <li class="fl tab-item li-send-msg" data-type=""><a href="javascript:;">发送</a></li>
+                </ul>
             </header>
             <ul class="main-list">
 
             </ul>
+            <div class="input-wp none">
+                <textarea name="content" id="content" cols="30" rows="10"></textarea>
+                <div class="btn-wp">
+                    <div class="ft-left fl">
+                        <a href="javascript:;" class="input-btn clear-btn center">清除 Clear</a>
+                    </div>
+                    <div class="ft-right fl">
+                        <a href="javascript:;" class="input-btn send-btn center">发送 Send</a>
+                    </div>
+                </div>
+            </div>
         </div>
-        <footer class="fixed footer">
-            <div><label for="receiver">Send To: <input type="text" value="receiver" name="receiver"/></label></div>
-            <textarea name="content" id="content" cols="30" rows="5">content</textarea>
-        </footer>
+        <!--<footer class="fixed footer">-->
+            <!--<div><label for="receiver">Send To: <input type="text" value="receiver" name="receiver"/></label></div>-->
+            <!--<textarea name="content" id="content" cols="30" rows="5">content</textarea>-->
+        <!--</footer>-->
         <script src="js/message.js" charset="utf-8"></script>
     </body>
 </html>
