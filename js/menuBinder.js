@@ -35,6 +35,7 @@ function binder(){
     })
     .on('click', '.J-settings', function(){
         startWindow('settings', 400, 600);
+            $menu.toggleClass('dummy--active');
     });
 
     $(document).on('click', '.img img', function(){

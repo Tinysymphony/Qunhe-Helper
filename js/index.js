@@ -233,6 +233,9 @@ function updateMenuBug(num, isShow, isLogin) {
     }
 
     if (isShow && (isLogin || num > nconf.get('bug'))) {
+        if(num <= 0){
+            return;
+        }
         console.log('here');
         notice('Bug提醒', '有' + num + '个Bug等待处理，请及时修理 or 甩锅', '', '../../img/s.png');
     }

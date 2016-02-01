@@ -5,6 +5,8 @@ const WINDOW = 'bug';
 const ACTION = require('../../js/const').ACTION;
 const SEND = require('../../js/const').SEND;
 
+var nconf = require('nconf');
+
 var $ = require('jquery');
 
 var stage = 'bug';
@@ -15,6 +17,11 @@ $(function(){
     ipc.send(ACTION.DATA_REQUEST, WINDOW);
     ipc.on(SEND.LOAD_BUG, updateBugList);
     //ipc.on(SEND.LOAD_RANK, loadRank);
+    ipc.send(ACTION.READY, 'bug');
+
+    ipc.on(SEND.DATA_PATH, function(emitter, dataPath){
+        nconf.file({file: dataPath});
+    });
 
     $('.main-list').on('click', '.item', function(){
         var url = $(this).data('url');
@@ -92,3 +99,7 @@ function staticRank(){
         '<li class="rank-item">5. alen --- 2</li></ul></div>';
     $('.bug-content').html(string);
 }
+
+//function getName(){
+
+//}
