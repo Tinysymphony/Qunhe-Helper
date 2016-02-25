@@ -3,6 +3,8 @@ var featureParser = require('./util/featureParser');
 var notice = require('./util/notification');
 var httpHandler = require('./util/httpHandler');
 
+var WINDOW = require('./const').WINDOW;
+
 const ipc = require('electron').ipcRenderer;
 
 function binder(){
@@ -10,32 +12,32 @@ function binder(){
 
     $menu
     .on('click', '.J-task', function(){
-        startWindow('task', 400, 500);
+        ipc.send('start-new', WINDOW.TASK);
         $menu.toggleClass('dummy--active');
     })
     .on('click', '.J-bug', function(){
-        startWindow('bug', 400, 500);
+        ipc.send('start-new', WINDOW.BUG);
         $menu.toggleClass('dummy--active');
     })
     .on('click', '.J-message', function(){
-        startWindow('message', 400, 500);
+        ipc.send('start-new', WINDOW.MESSAGE);
         $menu.toggleClass('dummy--active');
     })
     .on('click', '.J-info', function(){
-        startWindow('info', 300, 400, JSON.stringify(window.g_info));
+        ipc.send('start-new', WINDOW.INFO);
         $menu.toggleClass('dummy--active');
     })
     .on('click', '.J-top', function(){
-        startWindow('top', 400, 600);
+        ipc.send('start-new', WINDOW.TOP);
         $menu.toggleClass('dummy--active');
     })
     .on('click', '.J-about', function(){
-        startWindow('about', 300, 500);
+        ipc.send('start-new', WINDOW.ABOUT);
         $menu.toggleClass('dummy--active');
     })
     .on('click', '.J-settings', function(){
-        startWindow('settings', 400, 600);
-            $menu.toggleClass('dummy--active');
+        ipc.send('start-new', WINDOW.SETTINGS);
+        $menu.toggleClass('dummy--active');
     });
 
     $(document).on('click', '.img img', function(){
@@ -49,25 +51,6 @@ function binder(){
             window[info.name] = null;
         }
     });
-}
-
-function startWindow(name, width, height, data){
-    var url = 'file://' + path.resolve(__dirname, '../child/' + name + '/' + name + '.html');
-    var options = {
-        width: width,
-        height: height
-    };
-    options.x = screen.width / 2 - options.width / 2;
-    options.y = screen.height / 2 - options.height / 2;
-    // window['c_' + name] = window.open(url, 'c_' + name, featureParser(options));
-    ipc.send('start-new', name, url, options);
-    if(data){
-        console.log(data);
-        console.log(typeof data);
-        window['c_' + name].postMessage(data, '*');
-        window['c_' + name].data = JSON.parse(data);
-    }
-    // window.test = 'a';
 }
 
 module.exports = binder;

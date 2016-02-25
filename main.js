@@ -1,46 +1,33 @@
 'use strict';
 
-const fs = require('fs');
-const path = require('path');
-const electron = require('electron');
-
-// Module to get event from application's view.
-const ipc = electron.ipcMain;
-
-// Module to control application life.
-const app = electron.app;
-
-// Module to create native browser window.
-const BrowserWindow = electron.BrowserWindow;
+import fs from 'fs'
+import {app, BrowserWindow, ipcMain, Tray, Menu} from 'electron'
+import path from 'path'
 
 // Save user settings
-var nconf = require('nconf'),
-    dataPath = path.join(app.getPath('userData'), 'settings.json');
+import nconf from 'nconf'
+const dataPath = path.join(app.getPath('userData'), 'settings.json');
 nconf.file({file: dataPath});
 
 // Modules defined by Tiny (Guozi)
 // const httpHandler = require('./js/util/httpHandler');
-const dataHandler = require('./js/util/dataHandler');
+import dataHandler from './js/util/dataHandler'
 // Load Constants (Ps. these constants' property can be modified...)
-const CONST = require('./js/const.js'),
-    MODE = CONST.MODE,
-    ACTION = CONST.ACTION,
-    WINDOW = CONST.WINDOW,
-    STATUS = CONST.STATUS,
-    TYPE = CONST.TYPE,
-    SEND = CONST.SEND;
+import {MODE, ACTION, WINDOW, STATUS, TYPE, SEND, SIZE} from './js/const.js'
 
-var TEST_MODE = false,
+let TEST_MODE = false,
     DATA = null,
-    isNotify = true;
+    isNotify = true,
+    screenSize = null;
 // Using test mode
 
-var currentBugList = [STATUS.OPEN_BUG, STATUS.REOPENED_BUG],
+const currentBugList = [STATUS.OPEN_BUG, STATUS.REOPENED_BUG],
     historyBugList = [STATUS.CLOSED_BUG, STATUS.RESOLVED_BUG];
 
 if (process.argv[2] === MODE.TEST_MODE) {
     DATA = require('./js/data.js');
     TEST_MODE = true;
+    console.log('testing');
 } else {
     //DATA = require('./js/data.js');
     //TEST_MODE = true;
@@ -50,12 +37,12 @@ if (process.argv[2] === MODE.TEST_MODE) {
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
-var mainWindow;
+let mainWindow;
 // Global References of new windows created by the mainWindow.
-var newWindows = {};
+let newWindows = {};
 
 // Save information in the process for temporary use.
-var _username = 'irobot',
+let _username = 'irobot',
     _info = null,
     _bug = null,
     _message = null,
@@ -70,7 +57,7 @@ function createWindow() {
         transparent: true,
         autoHideMenuBar: true,
         frame: false,
-        resizable: false
+        resizable: true
     });
     // and load the index.html of the app.
     mainWindow.loadURL('file://' + __dirname + '/index.html');
@@ -78,7 +65,7 @@ function createWindow() {
     //mainWindow.webContents.openDevTools();
 
     // Emitted when the window is closed.
-    mainWindow.on('closed', function () {
+    mainWindow.on('closed', () => {
         // Dereference the window object, usually you would store windows
         // in an array if your app supports multi windows, this is the time
         // when you should delete the corresponding element.
@@ -90,12 +77,32 @@ function createWindow() {
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
-app.on('ready', function () {
+let appIcon = null;
+app.on('ready', () => {
+    appIcon = new Tray('./img/big@2x.png')
+    //top menu (OS X)
+    const template = [
+        {
+            label: 'Preferences...',
+            click: () => { startWindow(WINDOW.SETTINGS) }
+        },
+        {
+            label: 'About XiaoMeng',
+            cilck: () => { startWindow(WINDOW.ABOUT) }
+        },
+        {
+            label: 'Quit',
+            click: () => { app.quit() }
+        },
+    ]
+    const menu = Menu.buildFromTemplate(template)
+    appIcon.setToolTip('Guozi')
+    appIcon.setContextMenu(menu)
     createWindow();
 });
 
 // Quit when all windows are closed.
-app.on('window-all-closed', function () {
+app.on('window-all-closed', () => {
     // On OS X it is common for applications and their menu bar
     // to stay active until the user quits explicitly with Cmd + Q
     if (process.platform !== 'darwin') {
@@ -103,7 +110,7 @@ app.on('window-all-closed', function () {
     }
 });
 
-app.on('activate', function () {
+app.on('activate', () => {
     // On OS X it's common to re-create a window in the app when the
     // dock icon is clicked and there are no other windows open.
     if (mainWindow === null) {
@@ -112,22 +119,24 @@ app.on('activate', function () {
 });
 
 // when the main window is rendered, send the data path.
-ipc.on(ACTION.READY, function (emitter, window) {
-    if(window){
+ipcMain.on(ACTION.READY, (emitter, window, size) => {
+    if(window !== 'main'){
         newWindows[window].send(SEND.DATA_PATH, dataPath);
         return;
+    } else {
+        screenSize = size;
+        mainWindow.send(SEND.DATA_PATH, dataPath);
     }
-    mainWindow.send(SEND.DATA_PATH, dataPath);
 });
 
 // when the close button of the login window is pressed, close the application.
-ipc.on(ACTION.CLOSE_APP, function () {
+ipcMain.on(ACTION.CLOSE_APP, () => {
     app.quit();
 });
 
-ipc.on(ACTION.RESTART, function(){
+ipcMain.on(ACTION.RESTART, () => {
     console.log('Restarting...');
-    for(var win in newWindows){
+    for(let win in newWindows){
         if(newWindows[win] && newWindows.hasOwnProperty(win) && typeof newWindows[win] === 'object'){
             newWindows[win].send(SEND.CLOSE);
         }
@@ -136,23 +145,12 @@ ipc.on(ACTION.RESTART, function(){
 });
 
 // when items on the main menu is clicked, open a new window and save the reference.
-ipc.on(ACTION.NEW_WINDOW, function (emitter, name, url, options) {
-    options.resizable = false;
-    options.overlayScrollbars = true;
-    if (name === WINDOW.TOP) {
-        //link browser
-        options.nodeIntegration = false;
-    }
-    newWindows[name] = new BrowserWindow(options);
-    newWindows[name].loadURL(url);
-    // newWindows[name].webContents.openDevTools();
-    newWindows[name].on('closed', function () {
-        newWindows[name] = null;
-    });
+ipcMain.on(ACTION.NEW_WINDOW, (emitter, name, size) => {
+    startWindow(name, size);
 });
 
 // Router for handling data requests from the front-end
-ipc.on(ACTION.DATA_REQUEST, function (emitter, name, type) {
+ipcMain.on(ACTION.DATA_REQUEST, (emitter, name, type) => {
     // Data render test
     if (TEST_MODE) {
         switch (name) {
@@ -213,7 +211,7 @@ ipc.on(ACTION.DATA_REQUEST, function (emitter, name, type) {
 });
 
 // Login with LDAP account
-ipc.on(ACTION.LOGIN, function (emitter, username, password) {
+ipcMain.on(ACTION.LOGIN, (emitter, username, password) => {
     // Send Login Success message with the path to save user configurations.
     if (TEST_MODE) {
         mainWindow.send(SEND.LOGIN_SUCCESS);
@@ -224,7 +222,7 @@ ipc.on(ACTION.LOGIN, function (emitter, username, password) {
     dataHandler.login(username, password, mainWindow);
 });
 
-ipc.on(ACTION.POLLING_MSG, function () {
+ipcMain.on(ACTION.POLLING_MSG, () => {
     console.log('polling msg');
     if(TEST_MODE) {
         mainWindow.send(SEND.RENDER_MESSAGE, DATA.RenderMessage, isNotify, false);
@@ -233,7 +231,7 @@ ipc.on(ACTION.POLLING_MSG, function () {
     dataHandler.pollingMessage(mainWindow);
 });
 
-ipc.on(ACTION.POLLING_BUG, function(){
+ipcMain.on(ACTION.POLLING_BUG, () => {
     console.log('polling bug');
     if(TEST_MODE) {
         mainWindow.send(SEND.RENDER_BUG, DATA.Bug.total, isNotify, false);
@@ -242,6 +240,35 @@ ipc.on(ACTION.POLLING_BUG, function(){
     dataHandler.pollingBug(mainWindow, currentBugList);
 });
 
-ipc.on(ACTION.CLEAR_MSG, function(){
+ipcMain.on(ACTION.CLEAR_MSG, () => {
     mainWindow.send(SEND.CLEAR_MSG);
 });
+
+//functions
+
+function startWindow (name) {
+    console.log(name);
+    if(newWindows[name]){
+        return;
+    }
+    let size = SIZE[name.toUpperCase()];
+    let url = 'file://' + path.resolve(__dirname, './child/' + name + '/' + name + '.html');
+    let options = {
+        x: screenSize.width / 2 - size.width / 2,
+        y: screenSize.height / 2 - size.height / 2,
+        width: size.width,
+        height: size.height
+    }
+    options.resizable = false;
+    options.overlayScrollbars = true;
+    if (name === WINDOW.TOP) {
+        //link browser
+        options.nodeIntegration = false;
+    }
+    newWindows[name] = new BrowserWindow(options);
+    newWindows[name].loadURL(url);
+    // newWindows[name].webContents.openDevTools();
+    newWindows[name].on('closed', () => {
+        newWindows[name] = null;
+    });
+}

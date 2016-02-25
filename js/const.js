@@ -1,4 +1,4 @@
-var CONST = {
+const CONST = {
     // Run Mode
     MODE: {
         TEST_MODE: 'test'
@@ -62,6 +62,36 @@ var CONST = {
         GET_USERS: 'get-users',
         GET_USERS_ERROR: 'get-users-error',
         CLEAR_MSG: 'clear-message'
+    },
+    SIZE: {
+        TASK: {
+            width: 400,
+            height: 500
+        },
+        BUG: {
+            width: 400,
+            height: 500
+        },
+        MESSAGE: {
+            width: 400,
+            height: 500
+        },
+        INFO: {
+            width: 300,
+            height: 400
+        },
+        SETTINGS: {
+            width: 400,
+            height: 600
+        },
+        TOP: {
+            width: 400,
+            height: 600
+        },
+        ABOUT: {
+            width: 300,
+            height: 500
+        },
     }
     // Urls
 };

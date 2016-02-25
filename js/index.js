@@ -46,7 +46,12 @@ $(function () {
     });
 
     // Ready will get user login data.
-    ipc.send(ACTION.READY);
+    windowSize = {
+        width: screen.width,
+        height: screen.height
+    }
+
+    ipc.send(ACTION.READY, 'main', windowSize);
     ipc.on(SEND.DATA_PATH, autoInput);
     // Login success will have a side effect: trigger polling on.
     ipc.on(SEND.LOGIN_SUCCESS, loginSuccess);
