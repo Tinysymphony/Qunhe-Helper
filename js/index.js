@@ -147,9 +147,6 @@ function renderMessage(emitter, data, isShow, isLogin) {
     nconf.save();
     $('.red-point').text(num > 999 ? '...' : num).css({display: 'block'});
     $('.J-message').text('私信（' + num + '）');
-    //setTimeout(function () {
-    //    ipc.send(ACTION.POLLING_MSG);
-    //}, POLLING_TIME);
 }
 
 function renderMenuMsg(data, isShow) {

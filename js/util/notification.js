@@ -3,7 +3,7 @@ var notifier = require('node-notifier');
 
 var Notice = function (title, body, link, img) {
     if (process.platform === 'win32') {
-        console.log('windows');
+        console.log('Platform: win32');
         notifier.notify({
             title: title,
             message: body,
@@ -14,7 +14,7 @@ var Notice = function (title, body, link, img) {
         //    window.open(link);
         //});
     } else {
-        console.log('not windows');
+        console.log('Platform is not win32');
         var notification = new Notification(title, {
             icon: img || 'file',
             body: body || 'notification contents'

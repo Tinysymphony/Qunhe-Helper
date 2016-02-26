@@ -1,5 +1,6 @@
 const CONST = {
     // Run Mode
+    APP_ID: 'XM',
     MODE: {
         TEST_MODE: 'test'
     },
@@ -44,6 +45,7 @@ const CONST = {
     SEND: {
         CLOSE: 'close',
         RELOAD: 'reload',
+        BOARDCAST: 'boardcast',
         DATA_PATH: 'data-path',
         LOGIN_SUCCESS: 'login-success',
         LOGIN_FAILED: 'login-error',
@@ -63,6 +65,7 @@ const CONST = {
         GET_USERS_ERROR: 'get-users-error',
         CLEAR_MSG: 'clear-message'
     },
+    //Window Size
     SIZE: {
         TASK: {
             width: 400,
@@ -95,7 +98,6 @@ const CONST = {
     }
     // Urls
 };
-
 // _createConstant(CONST);
 
 module.exports = CONST;

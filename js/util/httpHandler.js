@@ -1,18 +1,19 @@
+'use strict'
 // Using http request to get data in json format.
 
-var req = require('request');
-var globalJar = req.jar();
+let req = require('request');
+let globalJar = req.jar();
 
 // url and method can be maintained in the const.js
 // const URL = require('../const').URL;
-//var jiraDomain = 'http://jira.qunhequnhe.com/';
-var jiraDomain = 'http://10.1.6.113/',
+//let jiraDomain = 'http://jira.qunhequnhe.com/';
+const jiraDomain = 'http://10.1.6.113/',
     msgDomain = 'http://10.10.31.222/',
     bugRankDomain = 'http://10.10.31.222/';
 
 function _login(username, password, onSuccess, onFail){
-    var tag = 'login';
-    var options = {
+    let tag = 'login';
+    let options = {
         url: jiraDomain + 'rest/auth/1/session',
         method: 'POST',
         json: {
@@ -25,8 +26,8 @@ function _login(username, password, onSuccess, onFail){
 }
 
 function _getInfo(onSuccess, onFail){
-    var tag = 'getInfo';
-    var options = {
+    let tag = 'getInfo';
+    let options = {
         url: jiraDomain + 'rest/api/2/myself',
         method: 'GET',
         jar: globalJar
@@ -35,8 +36,8 @@ function _getInfo(onSuccess, onFail){
 }
 
 function _getTask(onSuccess, onFail){
-    var tag = 'getTask';
-    var options = {
+    let tag = 'getTask';
+    let options = {
         url: jiraDomain + 'rest/api/2/project',
         method: 'GET',
         jar: globalJar
@@ -45,12 +46,12 @@ function _getTask(onSuccess, onFail){
 }
 
 function _getBug(name, queryStatus, onSuccess, onFail){
-    var tag = 'getBug';
+    let tag = 'getBug';
     if(!name){
         name = 'irobot';
     }
     console.log(queryStatus);
-    var options = {
+    let options = {
         url: jiraDomain + 'rest/api/2/search?jql=issuetype = Bug AND ' + queryStatus + ' AND assignee in (' + name + ')',
         method: 'GET',
         jar: globalJar
@@ -59,8 +60,8 @@ function _getBug(name, queryStatus, onSuccess, onFail){
 }
 
 function _getAllBugs(onSuccess, onFail){
-    var tag = 'getAllBugs';
-    var options = {
+    let tag = 'getAllBugs';
+    let options = {
         url: jiraDomain + 'rest/api/2/search?jql=issuetype = Bug',
         method: 'GET',
         jar: globalJar
@@ -69,8 +70,8 @@ function _getAllBugs(onSuccess, onFail){
 }
 
 function _getBugRank(onSuccess, onFail){
-    var tag = 'getBugRank';
-    var options = {
+    let tag = 'getBugRank';
+    let options = {
         url: bugRankDomain + 'api/notice',
         method: 'GET',
         jar: globalJar
@@ -79,8 +80,8 @@ function _getBugRank(onSuccess, onFail){
 }
 
 function _getMessage(id, onSuccess, onFail){
-    var tag = 'getMessage';
-    var options = {
+    let tag = 'getMessage';
+    let options = {
         url: msgDomain + 'api/readmessage?recipientId=' + id,
         method: 'GET',
         jar: globalJar
@@ -89,8 +90,8 @@ function _getMessage(id, onSuccess, onFail){
 }
 
 function _getUsers(onSuccess, onFail){
-    var tag = 'getUsers';
-    var options = {
+    let tag = 'getUsers';
+    let options = {
         url: msgDomain + 'api/userinfo',
         method: 'GET',
         jar: globalJar
@@ -117,7 +118,7 @@ function _base(tag, options, onSuccess, onFail, noParse){
     });
 }
 
-var Handler = {
+let Handler = {
     login: _login,
     getInfo: _getInfo,
     getTask: _getTask,

@@ -1,77 +1,75 @@
 // Handle data got from httphandler and send data to target window.
 
-var httpHandler = require('./httpHandler');
-const SEND = require('../const.js').SEND;
-const STATUS = require('../const.js').STATUS;
+import httpHandler from './httpHandler'
+import {SEND, STATUS} from '../const'
 
-var _username = '',
-    _basicBugLink = "http://jira.qunhequnhe.com/browse/",
-    _mainWindow = null,
+const _basicBugLink = "http://jira.qunhequnhe.com/browse/";
+
+let _username = '',
     _isNotify = true;
 
 function _login(username, password, window) {
-    httpHandler.login(username, password, function () {
+    httpHandler.login(username, password, () => {
         _username = username;
-        //_mainWindow = window;
         window.send(SEND.LOGIN_SUCCESS);
 
         // Send unread messages and trigger polling
 
         // Send unsolved bugs and trigger polling
-        var queryStatus = '(status = ' + STATUS.OPEN_BUG + ' OR status = '+ STATUS.REOPENED_BUG + ')';
-        httpHandler.getBug(username, queryStatus, function(data){
+        let queryStatus = '(status = ' + STATUS.OPEN_BUG + ' OR status = '+ STATUS.REOPENED_BUG + ')';
+        httpHandler.getBug(username, queryStatus, data => {
             window.send(SEND.RENDER_BUG, data.total, _isNotify, true);
-        }, function(){
+        }, () => {
             window.send(SEND.RENDER_BUG_ERROR);
         });
 
-        httpHandler.getUsers(function(data){
+        httpHandler.getUsers(data => {
             window.send(SEND.GET_USERS, data);
             //httpHandler.getMessage(38, function (data) {
             //    window.send(SEND.RENDER_MESSAGE, data, _isNotify, true);
-            //}, function () {
+            //}, () => {
             //    window.send(SEND.RENDER_MESSAGE_ERROR);
             //});
-        }, function(){
+        }, () => {
             window.send(SEND.GET_USERS_ERROR);
         });
 
-    }, function () {
+    }, () => {
         window.send(SEND.LOGIN_FAILED);
     });
 }
 
 function _getInfo(window) {
-    httpHandler.getInfo(function (data) {
+    httpHandler.getInfo(data => {
         window.send(SEND.LOAD_INFO, data);
-    }, function () {
+    }, () => {
         window.send(SEND.LOAD_FAILED);
     });
 }
 
 function _getTask(window) {
-    httpHandler.getTask(function (data) {
+    httpHandler.getTask(data => {
         data = _simplifyTask(data);
         window.send(SEND.LOAD_TASK, data);
-    }, function () {
+    }, () => {
         window.send(SEND.LOAD_FAILED);
     });
 }
 
 function _getMessage(window, mainWindow) {
-    httpHandler.getMessage(function (data) {
+    httpHandler.getMessage(data => {
         window.send(SEND.LOAD_MESSAGE, data);
         //mainWindow.send(SEND.RENDER_MESSAGE, data, true);
-    }, function () {
+    }, () => {
         window.send(SEND.LOAD_FAILED);
         //mainWindow.send(SEND.RENDER_MESSAGE_ERROR);
     });
 }
 
 function _pollingMessage(window) {
-    httpHandler.getMessage(function (data) {
+    httpHandler.getMessage(data => {
         window.send(SEND.RENDER_MESSAGE, data, _isNotify, false);
-    }, function () {
+    }, () => {
         window.send(SEND.RENDER_MESSAGE_ERROR);
     });
 }
@@ -83,28 +81,28 @@ function _sendMessage() {
 function _getBug(window, mainWindow, type, statusList) {
     // concatenate query condition (bug status)
 
-    var query = '(';
-    for (var i = 0; i < statusList.length; i++) {
+    let query = '(';
+    for (let i = 0; i < statusList.length; i++) {
         if (i != statusList.length - 1) {
             query += 'status = ' + statusList[i] + ' OR ';
         } else {
             query += 'status = ' + statusList[i] + ')';
         }
     }
-    httpHandler.getBug(_username, query, function (data) {
+    httpHandler.getBug(_username, query, data => {
         data = _simplifyBug(data);
         window.send(SEND.LOAD_BUG, data);
         if(type === 'bug'){
             mainWindow.send(SEND.UPDATE_MENU_BUG, data.total, _isNotify);
         }
-    }, function () {
+    }, () => {
         window.send(SEND.LOAD_FAILED);
     });
 }
 
 function _pollingBug(window, statusList){
-    var query = '(';
-    for (var i = 0; i < statusList.length; i++) {
+    let query = '(';
+    for (let i = 0; i < statusList.length; i++) {
         if (i != statusList.length - 1) {
             query += 'status = ' + statusList[i] + ' OR ';
         } else {
@@ -114,25 +112,25 @@ function _pollingBug(window, statusList){
     httpHandler.getBug(_username, query, function (data) {
         data = _simplifyBug(data);
         window.send(SEND.RENDER_BUG, data.total);
-    }, function () {
+    }, () => {
         window.send(SEND.RENDER_BUG_ERROR);
     });
 }
 
 // get bugs of everyone and rank them.
 function _rankBug(window) {
-    httpHandler.getBugRank(function (data) {
+    httpHandler.getBugRank(data => {
         window.send(SEND.LOAD_RANK, data);
-    }, function () {
+    }, () => {
         window.send(SEND.LOAD_FAILED);
     });
 }
 
 // Extract the attributes of tasks that we need, such as name, id , key, etc.
 function _simplifyTask(data) {
-    var result = [];
-    for (var i = 0; i < data.length; i++) {
-        var tmp = {
+    let result = [];
+    for (let i = 0; i < data.length; i++) {
+        let tmp = {
             "self": data[i]['self'],
             "key": data[i]['key'],
             "name": data[i]['name'],
@@ -145,11 +143,11 @@ function _simplifyTask(data) {
 
 // Extract the attributes of bugs that we need, such as key, title, description and JIRA link.
 function _simplifyBug(data) {
-    var result = {};
+    let result = {};
     result.bugs = [];
     result.total = data.total;
-    for (var i = 0; i < data.issues.length; i++) {
-        var tmp = {
+    for (let i = 0; i < data.issues.length; i++) {
+        let tmp = {
             "key": data.issues[i]["key"],
             "title": data.issues[i]["fields"]["summary"],
             "link": _basicBugLink + data.issues[i]["key"]
@@ -159,7 +157,7 @@ function _simplifyBug(data) {
     return result;
 }
 
-var DataHander = {
+module.exports = {
     login: _login,
     getInfo: _getInfo,
     getMessage: _getMessage,
@@ -169,5 +167,3 @@ var DataHander = {
     getTask: _getTask,
     rankBug: _rankBug
 };
-
-module.exports = DataHander;

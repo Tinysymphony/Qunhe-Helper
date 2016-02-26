@@ -1,7 +1,7 @@
 'use strict';
 
 import fs from 'fs'
-import {app, BrowserWindow, ipcMain, Tray, Menu} from 'electron'
+import {app, BrowserWindow, ipcMain, Tray, Menu, autoUpdater, screen} from 'electron'
 import path from 'path'
 
 // Save user settings
@@ -9,20 +9,31 @@ import nconf from 'nconf'
 const dataPath = path.join(app.getPath('userData'), 'settings.json');
 nconf.file({file: dataPath});
 
+
 // Modules defined by Tiny (Guozi)
-// const httpHandler = require('./js/util/httpHandler');
 import dataHandler from './js/util/dataHandler'
 // Load Constants (Ps. these constants' property can be modified...)
-import {MODE, ACTION, WINDOW, STATUS, TYPE, SEND, SIZE} from './js/const.js'
+import {MODE, ACTION, WINDOW, STATUS, TYPE, SEND, SIZE, APP_ID} from './js/const'
 
 let TEST_MODE = false,
     DATA = null,
     isNotify = true,
     screenSize = null;
+
+global.tiny = 'wytiny';
+global.sendToAllWindows = sendToAllWindows;
+
 // Using test mode
 
 const currentBugList = [STATUS.OPEN_BUG, STATUS.REOPENED_BUG],
-    historyBugList = [STATUS.CLOSED_BUG, STATUS.RESOLVED_BUG];
+    historyBugList = [STATUS.CLOSED_BUG, STATUS.RESOLVED_BUG],
+    serverHost = 'serverHost.qunhequnhe.com'; //Pseudo Host
+
+const arg = {
+    platform: process.platform,
+    appId: APP_ID,
+    version: nconf.get('version') || '1.0.1'
+}
 
 if (process.argv[2] === MODE.TEST_MODE) {
     DATA = require('./js/data.js');
@@ -60,7 +71,7 @@ function createWindow() {
         resizable: true
     });
     // and load the index.html of the app.
-    mainWindow.loadURL('file://' + __dirname + '/index.html');
+    mainWindow.loadURL(`file://${__dirname}/index.html`);
     // Open the DevTools.
     //mainWindow.webContents.openDevTools();
 
@@ -70,6 +81,7 @@ function createWindow() {
         // in an array if your app supports multi windows, this is the time
         // when you should delete the corresponding element.
         // newWindows = null;
+        appIcon = null;
         mainWindow = null;
     });
 
@@ -81,23 +93,11 @@ let appIcon = null;
 app.on('ready', () => {
     appIcon = new Tray('./img/big@2x.png')
     //top menu (OS X)
-    const template = [
-        {
-            label: 'Preferences...',
-            click: () => { startWindow(WINDOW.SETTINGS) }
-        },
-        {
-            label: 'About XiaoMeng',
-            cilck: () => { startWindow(WINDOW.ABOUT) }
-        },
-        {
-            label: 'Quit',
-            click: () => { app.quit() }
-        },
-    ]
+
     const menu = Menu.buildFromTemplate(template)
     appIcon.setToolTip('Guozi')
     appIcon.setContextMenu(menu)
+    // Menu.setApplicationMenu(menu)
     createWindow();
 });
 
@@ -119,11 +119,14 @@ app.on('activate', () => {
 });
 
 // when the main window is rendered, send the data path.
+// can be replaced by binding dataPath to the global object and be exposed to FE by remote.getGlobal('dataPath')
 ipcMain.on(ACTION.READY, (emitter, window, size) => {
     if(window !== 'main'){
+        // handle child windows' ready event: save dataPath to save user data
         newWindows[window].send(SEND.DATA_PATH, dataPath);
         return;
     } else {
+        //  handle main window ready event: save the screen size
         screenSize = size;
         mainWindow.send(SEND.DATA_PATH, dataPath);
     }
@@ -214,7 +217,7 @@ ipcMain.on(ACTION.DATA_REQUEST, (emitter, name, type) => {
 ipcMain.on(ACTION.LOGIN, (emitter, username, password) => {
     // Send Login Success message with the path to save user configurations.
     if (TEST_MODE) {
-        mainWindow.send(SEND.LOGIN_SUCCESS);
+        mainWindow.webContents.send(SEND.LOGIN_SUCCESS);
         mainWindow.send(SEND.RENDER_MESSAGE, DATA.RenderMessage, isNotify, true);
         mainWindow.send(SEND.RENDER_BUG, DATA.Bug.total, isNotify, true);
         return;
@@ -244,15 +247,99 @@ ipcMain.on(ACTION.CLEAR_MSG, () => {
     mainWindow.send(SEND.CLEAR_MSG);
 });
 
+//Auto Updater Module
+ipcMain.on(ACTION.UPDATE, () => {
+    updateVersion(arg);
+});
+
+function updateVersion(options) {
+    autoUpdater.setFeedUrl(getUpdateUrl(options))
+    autoUpdater.checkForUpdates();
+}
+
+function getUpdateUrl(options) {
+    return `http://${serverHost}/api/update?` +
+        `app_id=${options.appId}` +
+        `&current_version=${options.version}` +
+        `&platform=${options.platform}`
+}
+
+autoUpdater.on('checking-for-update', info => {
+    console.log('Checking For Update: ' + JSON.stringify(info));
+});
+
+autoUpdater.on('update-not-available', () => {
+    console.log("Update Not Available");
+});
+
+autoUpdater.on('update-available', info => {
+    console.log('Update Available: ' + JSON.stringify(info));
+});
+
+autoUpdater.on('update-downloaded', () => {} )
+
+autoUpdater.on('error', (status, info) => {
+    console.log(`AutoUpdate Error: ${status} --- ${info}`);
+});
+
 //functions
 
+//top menu: must be called within app.on('ready', () => {})
+const template = [
+    {
+        label: 'Task',
+        click: () => { startWindow(WINDOW.TASK) }
+    },
+    {
+        label: 'Bug',
+        submenu: [
+            {
+                label: 'Current',
+            },
+            {
+                label: 'History',
+            },
+            {
+                label: 'Ranking',
+            }
+        ]
+    },
+    {
+        label: 'Message',
+        submenu: [
+            {
+                label: 'Message Box'
+            },
+            {
+                label: 'Sender'
+            }
+        ]
+    },
+    {
+        label: 'Qunhe News',
+        click: () => { startWindow(WINDOW.TOP) }
+    },
+    {
+        label: 'Preferences...',
+        accelerator: 'Command+,',
+        click: () => { startWindow(WINDOW.SETTINGS) }
+    },
+    {
+        label: 'About XiaoMeng',
+        cilck: () => { startWindow(WINDOW.ABOUT) }
+    },
+    {
+        label: 'Quit',
+        click: () => { app.quit() }
+    },
+]
+
 function startWindow (name) {
-    console.log(name);
     if(newWindows[name]){
         return;
     }
     let size = SIZE[name.toUpperCase()];
-    let url = 'file://' + path.resolve(__dirname, './child/' + name + '/' + name + '.html');
+    let url = 'file://' + path.resolve(__dirname, `./child/${name}/${name}.html`);
     let options = {
         x: screenSize.width / 2 - size.width / 2,
         y: screenSize.height / 2 - size.height / 2,
@@ -271,4 +358,16 @@ function startWindow (name) {
     newWindows[name].on('closed', () => {
         newWindows[name] = null;
     });
+}
+
+// message: { type: String, data: Object }
+function sendToAllWindows(message) {
+    mainWindow.webContents.send(SEND.BOARDCAST, message)
+    if(newWindows){
+        for(let win in newWindows){
+            if(newWindows[win] && newWindows.hasOwnProperty(win) && typeof newWindows[win] === 'object'){
+                newWindows[win].webContents.send(SEND.BOARDCAST, message);
+            }
+        }
+    }
 }
